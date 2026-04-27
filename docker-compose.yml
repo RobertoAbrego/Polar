@@ -1,0 +1,33 @@
+﻿version: '3.8'
+
+services:
+
+  db2:
+    image: ibmcom/db2
+    container_name: db2
+    privileged: true
+    ports:
+      - "50000:50000"
+    environment:
+      LICENSE: accept
+      DB2INST1_PASSWORD: Password123
+      DBNAME: POLAR
+    volumes:
+      - db2_data:/database
+
+  web:
+    build: .
+    container_name: polar_app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db2
+    environment:
+      DB2_HOST: db2
+      DB2_PORT: 50000
+      DB2_DB: POLAR
+      DB2_USER: db2inst1
+      DB2_PASSWORD: Password123
+
+volumes:
+  db2_data:

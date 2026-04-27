@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DSDriver Known Issues List</title>
+</head>
+<body>
+
+<h1>List of DSDriver Related Known Issues Fixed in Release, Mod and Fix Pack</h1>
+
+<p>The list of Known Issues are organized based on version of DSDriver.
+    Further the list of Known Issues are separated based on below three categories:</p>
+    <dl>
+        <dt>JCC Driver</dt>
+        <dd>- Known Issues related to JCC/JDBC, SQLJ, CLPPlus and NoSQL/JSON driver</dd>
+        <dt>.NET Driver</dt>
+        <dd>- Known Issues related to C# .NET application development</dd>
+        <dt>ODBC and CLI Driver</dt>
+        <dd>- Known Issues related to ODBC/CLI, OLEDB, ESQL and other components used by C/C++ application development</dd>
+      </dl>
+<p>A detailed list of Known Issues of previous releases can be found in "JDBC Driver", "Client Interfaces", "Client" and "CLI" section of the given link <a href="https://www.ibm.com/support/pages/fix-list-db2-version-115-linux-unix-and-windows">here.</a></p>
+
+<h2>DSDriver V12.1.0.0</h2>
+
+  <h3>JCC Driver</h3>
+  <ul>
+    <li><a href="https://www.ibm.com/mysupport/s/defect/aCI3p000000Cotj">DT197331</a>: Security: Vulnerability found in apache-mime4j package</li>
+  </ul>
+  <ul>
+    <li><a href="https://www.ibm.com/mysupport/aCI3p0000000GhE">DT246671</a>: JCC driver throws NPE when sysplex pool dump is enabled via global property file</li>
+  </ul>
+  <ul>
+    <li><a href="https://www.ibm.com/mysupport/aCI3p0000000HKL">DT256996</a>: JCC displays password in exception object for errorcode -4461</li>   
+  </ul>
+  <ul>
+    <li><a href="https://www.ibm.com/mysupport/aCI3p0000000HxS">DT259757</a>: Connection authorization failure occurred.  Reason: Local security service non-retryable error. ERRORCODE=-4214 with JCC driver 4.33.31</li>    
+  </ul>
+  <ul>
+    <li><a href="https://www.ibm.com/mysupport/aCI3p0000000IXG">DT269687</a>: While performing JCC XA trusted switch user, operation fails with Unsupported DDM object code point: 0x1219. ERRORCODE=-4499, SQLSTATE=58015</li>    
+  </ul>
+  <ul>
+    <li><a href="https://www.ibm.com/mysupport/aCI3p0000008dRO">DT258271</a>: XAResource#start() can override Integer cache value when using jcc type 2 driver on Db2 11.5.8/11.5.9</li>    
+  </ul>
+  <ul>
+    <li><a href="https://www.ibm.com/mysupport/aCI3p000000LGoq">DT245697</a>: When DB2 connection is done through MS Store certificate using IBM Semeru 11.0.15, customer is getting java.security.NoSuchProviderException: no such provider: IBMCAC</li>   
+  </ul>
+  <ul>
+    <li><a href="https://www.ibm.com/mysupport/aCI3p000000Xquu">DT261720</a>: If driver encounters protocol error (receiving ENDUOWRM in response to EXCSAT/ACCSEC buffer), refrain from initiating any retry attempts</li>    
+  </ul>
+  <ul>
+    <li><a href="https://www.ibm.com/mysupport/aCI3p000000XrFx">DT271477</a>: With security mechanism 15, in version 4.32.45, connection resulted in null SQLCA, but with 4.33.31 version, getting SQLCA warning.</li>  
+  </ul>
+  <ul>
+    <li><a href="https://www.ibm.com/mysupport/aCI3p000000fxt7">DT240577</a>: XID is not being released with enableDualTransportUsingDifferentProcess set to 1 under MQ</li> 
+  </ul>
+  <ul>
+    <li><a href="https://www.ibm.com/mysupport/aCIKe000000ChTo">DT390357</a>: Connection fails when using security mechanism 3 with FIPS enabled IBM Semeru JDK17</li>   
+  </ul>
+  <ul>
+    <li><a href="https://www.ibm.com/mysupport/aCIKe000000XZrk">DT383334</a>: When XA-RMFAIL occurs in server during xa-prepare, JCC driver notifying WAS connection pool about the disconnect event.</li> 
+  </ul>
+  <ul>
+    <li><a href="https://www.ibm.com/mysupport/aCIKe000000XcpI">DT389991</a>: Driver failed to read the ENDUOWRM reply of RDBCMM during PreparedStatement.close()</li>  
+  </ul>
+  <ul>
+    <li><a href="https://www.ibm.com/mysupport/aCI3p0000000D4s">DT196087</a>: SQL104 when running EXPORT EXTERNAL command in CLPPLUS</li>  
+  </ul>
+
+  <h3>.Net Driver</h3>
+  <ul>
+    <li><a href="https://www.ibm.com/mysupport/aCI3p000000Pass">DT196972</a>: DB2DataReader.GetValue() returns System.Int16 type value for the boolean column instead of System.Boolean type value.</li>   
+  </ul>
+
+  <h3>ODBC and CLI Driver</h3>
+  <ul>
+    <li><a href="https://www.ibm.com/mysupport/s/defect/aCI3p000000PZsIGAW">DT179633</a>: Invalid file handle error returned by SQLDriverConnect/W() API on windows platform causing engine abort</li>
+  </ul>
+
+<h2>DSDriver V12.1.1.0</h2>
+
+  <h3>JCC Driver</h3>
+  <ul>
+    <li><a href="https://www.ibm.com/mysupport/s/defect/aCIKe000000Cia2">DT395504</a>: Db2 JDBC Driver throwing ArrayIndexOutOfBound due to selection of invalid Best member selection</li>
+  </ul>
+
+  <h3>ODBC and CLI Driver</h3>
+  <ul>
+    <li><a href="https://www.ibm.com/mysupport/s/defect/aCIKe000000CibF">DT395617</a>: Locale setting is not effective for decimal separator on decfloat columns under France locale with cli driver</li>
+  </ul>
+
+</body>
+</html>
