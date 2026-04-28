@@ -11,6 +11,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include=".github\ISSUE_TEMPLATE\bug_report.md" />
+    <None Include=".github\ISSUE_TEMPLATE\feature_request.md" />
+    <None Include=".github\pull-request-template.md" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Data.Odbc" Version="10.0.7" />
   </ItemGroup>
 

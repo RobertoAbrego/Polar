@@ -22,6 +22,13 @@ services:
       - "8080:8080"
     depends_on:
       - db2
+      
+    volumes:
+      - .:/app
+
+    # EJECUCIÓN EN VIVO
+    command: dotnet watch run --urls=http://0.0.0.0:8080
+
     environment:
       DB2_HOST: db2
       DB2_PORT: 50000
