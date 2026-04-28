@@ -1,8 +1,179 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Inicio";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="hero-panel mb-4 mb-lg-5">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+            <span class="hero-kicker">Conciencia ambiental · hábitos sostenibles · acción diaria</span>
+            <h1 class="hero-title">
+                Pequeñas decisiones, <span class="accent">gran impacto</span> para el planeta.
+            </h1>
+            <p class="hero-text">
+                Polar ayuda al usuario a transformar su rutina en acciones concretas para reducir el impacto ambiental.
+                La plataforma concentra consejos, tareas y recomendaciones prácticas para construir hábitos sostenibles de forma progresiva.
+            </p>
+
+            <div class="hero-actions">
+                <a class="btn btn-polar-primary" href="#consejos">Explorar consejos</a>
+                <a class="btn btn-polar-secondary" href="#tareas">Ver tareas de hoy</a>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="section-card h-100">
+                <span class="badge-polar mb-3">Estado actual del proyecto</span>
+                <h2 class="section-title mb-2">Base funcional lista para crecer</h2>
+                <p class="section-subtitle mb-4">
+                    Esta primera versión se enfoca en una experiencia clara, visualmente coherente y preparada para escalar hacia módulos más avanzados.
+                </p>
+
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="metric-card h-100">
+                            <div class="card-label">Consejos</div>
+                            <p class="card-value">24/7</p>
+                            <p class="card-note">Contenido útil en cualquier momento.</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="metric-card h-100">
+                            <div class="card-label">Enfoque</div>
+                            <p class="card-value">Acción</p>
+                            <p class="card-note">Tareas simples, medibles y sostenibles.</p>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="metric-card">
+                            <div class="card-label">Futuro próximo</div>
+                            <p class="card-value" style="font-size:1.35rem;">Chatbot de apoyo ambiental</p>
+                            <p class="card-note">
+                                La arquitectura visual ya queda preparada para integrar asistencia conversacional en versiones posteriores.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4" id="consejos">
+    <div class="col-12">
+        <h2 class="section-title">Consejos rápidos para comenzar</h2>
+        <p class="section-subtitle mb-0">Acciones cotidianas que pueden aplicarse de inmediato sin requerir cambios complejos en la rutina.</p>
+    </div>
+
+    <div class="col-md-4">
+        <div class="feature-card">
+            <span class="badge-polar mb-3">Hogar</span>
+            <h3 class="h5 fw-bold">Reduce consumo energético</h3>
+            <p class="text-polar-muted mb-0">
+                Apaga equipos no utilizados, prioriza iluminación eficiente y desconecta cargadores cuando no estén en uso.
+            </p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="feature-card">
+            <span class="badge-polar mb-3">Movilidad</span>
+            <h3 class="h5 fw-bold">Optimiza tus traslados</h3>
+            <p class="text-polar-muted mb-0">
+                Reúne trayectos, comparte transporte cuando sea posible y prioriza caminar o usar bicicleta en distancias cortas.
+            </p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="feature-card">
+            <span class="badge-polar mb-3">Consumo</span>
+            <h3 class="h5 fw-bold">Compra con criterio</h3>
+            <p class="text-polar-muted mb-0">
+                Evita compras impulsivas, selecciona productos duraderos y reduce el uso de plásticos de un solo uso.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4" id="tareas">
+    <div class="col-lg-6">
+        <div class="section-card h-100">
+            <span class="badge-polar mb-3">Tarea sugerida</span>
+            <h2 class="section-title">Reto de hoy</h2>
+            <p class="section-subtitle">
+                El objetivo es convertir una intención general en una acción concreta, breve y ejecutable.
+            </p>
+
+            <ul class="list-clean mt-4">
+                <li>
+                    <span class="check-icon">✓</span>
+                    <span>Separar residuos orgánicos e inorgánicos durante el día.</span>
+                </li>
+                <li>
+                    <span class="check-icon">✓</span>
+                    <span>Reducir el tiempo de pantalla y apagar dispositivos no esenciales.</span>
+                </li>
+                <li>
+                    <span class="check-icon">✓</span>
+                    <span>Usar una botella reutilizable en lugar de envases desechables.</span>
+                </li>
+                <li>
+                    <span class="check-icon">✓</span>
+                    <span>Registrar una acción ecológica realizada hoy para medir avance.</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="section-card h-100">
+            <span class="badge-polar mb-3">Progreso</span>
+            <h2 class="section-title">Estructura de evolución del proyecto</h2>
+            <p class="section-subtitle">
+                Polar puede crecer sin rehacer su base visual. La siguiente etapa natural consiste en organizar el contenido por módulos.
+            </p>
+
+            <div class="row g-3 mt-1">
+                <div class="col-md-6">
+                    <div class="feature-card h-100">
+                        <h3 class="h6 fw-bold">Módulo de consejos</h3>
+                        <p class="text-polar-muted mb-0">Lista curada de recomendaciones por contexto: hogar, transporte, consumo y energía.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="feature-card h-100">
+                        <h3 class="h6 fw-bold">Módulo de tareas</h3>
+                        <p class="text-polar-muted mb-0">Retos diarios o semanales con seguimiento de cumplimiento y progreso acumulado.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="feature-card h-100">
+                        <h3 class="h6 fw-bold">Registro de impacto</h3>
+                        <p class="text-polar-muted mb-0">Indicadores simples para visualizar hábitos sostenibles y mejora continua.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="feature-card h-100">
+                        <h3 class="h6 fw-bold">Asistente futuro</h3>
+                        <p class="text-polar-muted mb-0">Base lista para un chatbot que oriente al usuario en cualquier momento.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section-card" id="impacto">
+    <div class="row align-items-center g-3">
+        <div class="col-lg-8">
+            <span class="badge-polar mb-3">Impacto</span>
+            <h2 class="section-title mb-2">Diseño pensado para educar, orientar y sostener hábitos</h2>
+            <p class="section-subtitle mb-0">
+                El valor de Polar no está solo en mostrar información, sino en guiar al usuario hacia acciones realistas que puedan repetirse y mantenerse en el tiempo.
+            </p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+            <a class="btn btn-polar-primary" asp-area="" asp-controller="Home" asp-action="Privacy">Revisar privacidad</a>
+        </div>
+    </div>
 </div>

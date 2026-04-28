@@ -1,47 +1,78 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Polar</title>
+
     <script type="importmap"></script>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Polar.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Polar</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+    <header class="site-header">
+        <nav class="navbar navbar-expand-lg navbar-dark navbar-polar py-3">
+            <div class="container">
+                <a class="navbar-brand brand-polar d-flex align-items-center gap-2" asp-area="" asp-controller="Home" asp-action="Index">
+                    <span class="brand-mark">❄</span>
+                    <span>Polar</span>
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#polarNavbar"
+                        aria-controls="polarNavbar" aria-expanded="false" aria-label="Abrir navegación">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+
+                <div class="collapse navbar-collapse" id="polarNavbar">
+                    <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link nav-polar-link" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link nav-polar-link" asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="consejos">Consejos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link nav-polar-link" asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="tareas">Tareas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link nav-polar-link" asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="impacto">Impacto</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link nav-polar-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad</a>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - Polar - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <main role="main" class="main-shell">
+        <div class="container py-4 py-lg-5">
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer class="footer-polar mt-auto">
+        <div class="container py-4">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-6">
+                    <div class="footer-brand">Polar</div>
+                    <p class="footer-text mb-0">
+                        Concientización ambiental, hábitos sostenibles y acciones simples para reducir el impacto ecológico.
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a class="footer-link me-3" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
+                    <a class="footer-link me-3" asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="tareas">Tareas</a>
+                    <a class="footer-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad</a>
+                    <div class="footer-copy mt-2">© 2026 Polar</div>
+                </div>
+            </div>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
