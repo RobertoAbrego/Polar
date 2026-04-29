@@ -1,6 +1,4 @@
-﻿version: '3.8'
-
-services:
+﻿services:
 
   db2:
     image: ibmcom/db2
@@ -14,22 +12,27 @@ services:
       DBNAME: POLAR
     volumes:
       - db2_data:/database
+      - ./db2_backup:/database/backup
 
   web:
-    build: .
-    container_name: polar_app
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    container_name: polar_app_dev
+    working_dir: /app
+
     ports:
       - "8080:8080"
+
     depends_on:
       - db2
-      
+
     volumes:
       - .:/app
 
-    # EJECUCIÓN EN VIVO
+
     command: dotnet watch run --urls=http://0.0.0.0:8080
 
     environment:
+      ASPNETCORE_ENVIRONMENT: Development
       DB2_HOST: db2
       DB2_PORT: 50000
       DB2_DB: POLAR
