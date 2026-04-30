@@ -1,9 +1,9 @@
 
-Propuesta de Plataforma: 
+Propuesta de Plataforma:
 POLAR Red Social de Concientización y Acción contra el Cambio Climático 
 
 ---
-# **1. Descripción General**. 
+# **1. Descripción General** 
 POLAR es una red social enfocada en la acción
 climática, que combina gamificación, inteligencia artificial y participación comunitaria para incentivar hábitos sostenibles en la vida cotidiana. A diferencia de otras plataformas que solo informan, POLAR busca generar impacto real, motivando a los usuarios a cumplir pequeñas acciones diarias que, acumuladas, contribuyen a la reducción del impacto ambiental. 
 ---
@@ -14,7 +14,8 @@ mediante:
 * Incentivos digitales (recompensas).
 * Participación social y comunitaria. 
 ---
-# **3. Problema que aborda Muchas personas:**
+# **3.Problema que aborda**
+Muchas personas:
  * Quieren ayudar al medio ambiente, pero no saben cómo 
  * Subestiman el impacto de pequeñas acciones 
  * Pierden motivación rápidamente 
@@ -39,7 +40,8 @@ Las misiones pueden ser:
 * Semanales 
 * Comunitarias 
 ---
-## **5.2 Inteligencia Artificial La IA cumple un rol clave:** 
+## **5.2 Inteligencia Artificial** 
+La IA cumple un rol clave: 
 * Genera misiones personalizadas según hábitos del usuario. 
 * Detecta patrones de comportamiento. 
 * Sugiere mejoras progresivas. 
