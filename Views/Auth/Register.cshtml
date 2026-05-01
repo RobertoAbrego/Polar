@@ -1,0 +1,17 @@
+@model Polar.Models.RegisterModel
+
+<h2>Registro</h2>
+
+<form method="post" asp-action="Register">
+    <div>
+        <label>Email</label>
+        <input type="email" name="email" required />
+    </div>
+
+    <div>
+        <label>Password</label>
+        <input type="password" name="password" required />
+    </div>
+
+    <button type="submit">Crear cuenta</button>
+</form>

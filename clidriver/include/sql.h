@@ -17,7 +17,7 @@
 **              Error Message Retrieval Interface
 **              Authorization Constants
 ** 
-** Operating System:  Windows NT
+** Operating System: LINUX
 ** 
 *******************************************************************************/
 #ifndef SQL_H_SQL
@@ -37,11 +37,6 @@ extern "C" {
 #include "sqlca.h"                     /* Required include file    */
 #endif
 
-#ifdef _WIN64
-#pragma pack(8)
-#else
-#pragma pack(4)
-#endif
 
 /* Release Identifier Constants                                               */
 
@@ -337,7 +332,7 @@ typedef int          SQL_PDB_PORT_TYPE;/* Datatype of PDB port               */
                                        /* node name                           */
 #define SQL_PDB_NODE_NAME_LEN  8       /* length of logical node name         */
 #define SQL_NODE_NUM_TO_NAME(name_p,node_num) \
-        _snprintf_s(name_p, SQL_PDB_NODE_NAME_LEN+1, _TRUNCATE, "NODE%.*d", SQL_PDB_NODE_NUM_DIGIT, node_num)
+        snprintf(name_p, SQL_PDB_NODE_NAME_LEN+1, "NODE%.*d", SQL_PDB_NODE_NUM_DIGIT, node_num)
 typedef signed short SQL_PDB_DBPARTITION_TYPE;/* Datatype of PDB dbpartition          */
 #define SQL_PDB_MAX_NUM_DBPARTITION 1000 /* limit for max. # of dbpartitions  */
 /* information related to logical partition name                              */
@@ -346,7 +341,7 @@ typedef signed short SQL_PDB_DBPARTITION_TYPE;/* Datatype of PDB dbpartition    
 #define SQL_PDB_DBPARTITION_NAME_LEN 15 /* length of logical dbpartition      */
                                        /* name                                */
 #define SQL_DBPARTITION_NUM_TO_NAME(name_p,dbpartition_num) \
-        _snprintf_s(name_p, SQL_PDB_DBPARTITION_NAME_LEN+1, _TRUNCATE, "DBPARTITION%.*d", SQL_PDB_DBPARTITION_NUM_DIGIT, dbpartition_num)
+        snprintf(name_p, SQL_PDB_DBPARTITION_NAME_LEN+1, "DBPARTITION%.*d", SQL_PDB_DBPARTITION_NUM_DIGIT, dbpartition_num)
 /* Codepages                                                                  */
 #define SQL_CP_367             367     /* Codepage 367 - EUC single byte      */
 #define SQL_CP_420             420     /* CCSID x01A4, (CP420, ST4)           */
@@ -753,9 +748,9 @@ typedef signed short SQL_PDB_DBPARTITION_TYPE;/* Datatype of PDB dbpartition    
 #define SQL_HKBIG5_PC          16      /* Hong Kong Big5 HKSCS                */
 #define SQL_UNKN_PC            255     /* Unknown                             */
 
-/* AIX codeset & locale lengths                                               */
-#define SQL_CODESET_LEN        9
-#define SQL_LOCALE_LEN         5
+/* OEM codeset & locale lengths                                               */
+#define SQL_CODESET_LEN        17
+#define SQL_LOCALE_LEN         33
 
 /* Codeset & locale lengths for sqle_db_territory_info struct                 */
 #define SQL_CODESET_SIZE       17
@@ -3167,7 +3162,6 @@ SQL_API_RC SQL_API_FN                      /* Sqlstate Message Retrieval      */
                                        /* UDF or stored procedure will use    */
                                        /* authid of definer of UDF or stored  */
                                        /* procedure                           */
-#pragma pack()
 
 #ifdef __cplusplus 
 }

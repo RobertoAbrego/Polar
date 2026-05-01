@@ -15,7 +15,7 @@
 **              Environment Commands - Function Prototypes
 **              Environment Commands - Labels for SQLCODES
 ** 
-** Operating System: Windows NT
+** Operating System:LINUX
 ** 
 *******************************************************************************/
 #ifndef SQL_H_SQLENV
@@ -35,11 +35,6 @@ extern "C" {
 #include "sqlda.h"
 #include <stddef.h>                    /* needed for offsetof */
 
-#ifdef _WIN64
-#pragma pack(8)
-#else
-#pragma pack(4)
-#endif
 
 /* Interface Parameters/Structures/Return Codes                               */
 
@@ -73,7 +68,7 @@ extern "C" {
 #define SQL_DRIVE_SZ_DB2DOS    2       /* Drive (Qualified) - Windows         */
 #define SQL_DRIVE_SZ_DB2WINT   12      /* Drive (Qualified) - NT              */
 #define SQL_DRIVE_SZ_DB2AIX    215     /* Path (Qualified) - AIX/UNIX         */
-#define SQL_DRIVE_SZ           SQL_DRIVE_SZ_DB2WINT
+#define SQL_DRIVE_SZ           SQL_DRIVE_SZ_DB2AIX
 
 #define SQL_DB_PATH_SZ         215     /* Database path (Qualified)           */
 
@@ -105,7 +100,7 @@ extern "C" {
 #define SQL_TPMON_NAME_SZ      19      /* TP Monitor Name                     */
 #define SQL_SYM_DEST_NAME_SZ   8       /* Symbolic Destination Name           */
 #define SQL_TMDATABASE_NAME_SZ 8       /* TM Database Name                    */
-#define SQL_AR_SZ              8       /* AR Library Name                     */
+#define SQL_AR_SZ              32      /* AR Library Name                     */
 #define SQL_SYSTEM_NAME_SZ     21      /* System Name                         */
 #define SQL_REMOTE_INSTNAME_SZ 8       /* Remote Instance Name                */
 #define SQL_IPXADDRESS_SZ      27      /* IPX address size                    */
@@ -6535,7 +6530,7 @@ SQL_API_RC SQL_API_FN                        /* Drop Node Verify              */
 #define SQLE_RC_INVPSW_DB2MAC -1003          /* Invalid password - Mac        */
 #define SQLE_RC_INVPSW_DB2AIX -10002         /* Invalid password - AIX        */
 
-#define SQLE_RC_INVPSW SQLE_RC_INVPSW_DB2NT
+#define SQLE_RC_INVPSW SQLE_RC_INVPSW_DB2AIX
 
 #define SQLE_RC_INSSTOR -1004                /* Insuf storage on file system  */
 #define SQLE_RC_DUPALIAS -1005               /* Duplicate alias               */
@@ -6569,7 +6564,7 @@ SQL_API_RC SQL_API_FN                        /* Drop Node Verify              */
                                              /* Macintosh                     */
 #define SQLE_RC_INSSYS_DB2AIX -10003         /* Insuf system resources - AIX  */
 
-#define SQLE_RC_INSSYS SQLE_RC_INSSYS_DB2NT
+#define SQLE_RC_INSSYS SQLE_RC_INSSYS_DB2AIX
 
 #define SQLE_RC_NOCONV -1023                 /* Communication conversation    */
                                              /* failed                        */
@@ -6602,7 +6597,7 @@ SQL_API_RC SQL_API_FN                        /* Drop Node Verify              */
 #define SQLE_RC_FILEDIR_DB2MAC -1039         /* Directory file error - Mac    */
 #define SQLE_RC_FILEDIR_DB2AIX -10004        /* Directory file error - AIX    */
 
-#define SQLE_RC_FILEDIR SQLE_RC_FILEDIR_DB2NT
+#define SQLE_RC_FILEDIR SQLE_RC_FILEDIR_DB2AIX
 
 #define SQLE_RC_MAXAPPLS -1040               /* Max number of applications    */
                                              /* reached                       */
@@ -6626,7 +6621,7 @@ SQL_API_RC SQL_API_FN                        /* Drop Node Verify              */
                                              /* MacOS                         */
 #define SQLE_RC_USEINVALID_DB2AIX -10005     /* Invalid use specified - AIX   */
 
-#define SQLE_RC_USEINVALID SQLE_RC_USEINVALID_DB2NT
+#define SQLE_RC_USEINVALID SQLE_RC_USEINVALID_DB2AIX
 
 #define SQLE_RC_APPSERR -900                 /* Appl state in error           */
 
@@ -6672,7 +6667,7 @@ SQL_API_RC SQL_API_FN                        /* Drop Node Verify              */
                                              /* MacOS                         */
 #define SQLE_RC_NOMSG_DB2AIX -10007          /* Message file not found - AIX  */
 
-#define SQLE_RC_NOMSG  SQLE_RC_NOMSG_DB2NT
+#define SQLE_RC_NOMSG  SQLE_RC_NOMSG_DB2AIX
 
 #define SQLE_RC_INVDROP -1069                /* DB invalid type for Drop      */
 
@@ -6735,7 +6730,7 @@ SQL_API_RC SQL_API_FN                        /* Drop Node Verify              */
 #define SQLE_RC_WRPROT_ERR_DB2AIX -10021     /* Write protect error on        */
                                              /* filesystem                    */
 
-#define SQLE_RC_WRPROT_ERR SQLE_RC_WRPROT_ERR_DB2NT
+#define SQLE_RC_WRPROT_ERR SQLE_RC_WRPROT_ERR_DB2AIX
 
 #define SQLE_RC_NODE_WARN 1100               /* Node not cataloged for        */
                                              /* database                      */
@@ -6758,7 +6753,7 @@ SQL_API_RC SQL_API_FN                        /* Drop Node Verify              */
 #define SQLE_RC_INV_SPDB_DB2AIX -10017       /* Invalid disconnect from       */
                                              /* database                      */
 
-#define SQLE_RC_INV_SPDB SQLE_RC_INV_SPDB_DB2NT
+#define SQLE_RC_INV_SPDB SQLE_RC_INV_SPDB_DB2AIX
 
 #define SQLE_RC_INVALID_PROC_DB2OS2 -1106    /* Function could not be         */
                                              /* executed                      */
@@ -6773,7 +6768,7 @@ SQL_API_RC SQL_API_FN                        /* Drop Node Verify              */
 #define SQLE_RC_INVALID_PROC_DB2AIX -10010   /* Function could not be         */
                                              /* executed                      */
 
-#define SQLE_RC_INVALID_PROC SQLE_RC_INVALID_PROC_DB2NT
+#define SQLE_RC_INVALID_PROC SQLE_RC_INVALID_PROC_DB2AIX
 
 #define SQLE_RC_INTRP_PROC_DB2OS2 -1107      /* Program interrupted - OS/2    */
 #define SQLE_RC_INTRP_PROC_DB2NT -1107       /* Program interrupted - NT      */
@@ -6783,7 +6778,7 @@ SQL_API_RC SQL_API_FN                        /* Drop Node Verify              */
 #define SQLE_RC_INTRP_PROC_DB2MAC -1107      /* Program interrupted - MacOS   */
 #define SQLE_RC_INTRP_PROC_DB2AIX -10011     /* Program interrupted - AIX     */
 
-#define SQLE_RC_INTRP_PROC SQLE_RC_INVALID_PROC_DB2NT
+#define SQLE_RC_INTRP_PROC SQLE_RC_INVALID_PROC_DB2AIX
 
 #define SQLE_RC_SYSERR_PROC_DB2OS2 -1108     /* System error on library load  */
 #define SQLE_RC_SYSERR_PROC_DB2NT -1108      /* System error on library load  */
@@ -6792,7 +6787,7 @@ SQL_API_RC SQL_API_FN                        /* Drop Node Verify              */
 #define SQLE_RC_SYSERR_PROC_DB2MAC -1108     /* System error on library load  */
 #define SQLE_RC_SYSERR_PROC_DB2AIX -10012    /* System error on library load  */
 
-#define SQLE_RC_SYSERR_PROC SQLE_RC_SYSERR_PROC_DB2NT
+#define SQLE_RC_SYSERR_PROC SQLE_RC_SYSERR_PROC_DB2AIX
 
 #define SQLE_RC_NOFILE_PROC_DB2OS2 -1109     /* Library could not be loaded   */
 #define SQLE_RC_NOFILE_PROC_DB2NT -1109      /* Library could not be loaded   */
@@ -6801,7 +6796,7 @@ SQL_API_RC SQL_API_FN                        /* Drop Node Verify              */
 #define SQLE_RC_NOFILE_PROC_DB2MAC -1109     /* Library could not be loaded   */
 #define SQLE_RC_NOFILE_PROC_DB2AIX -10013    /* Library could not be loaded   */
 
-#define SQLE_RC_NOFILE_PROC SQLE_RC_NOFILE_PROC_DB2NT
+#define SQLE_RC_NOFILE_PROC SQLE_RC_NOFILE_PROC_DB2AIX
 
 #define SQLE_RC_ERROR_PROC -1110             /* Program error                 */
 
@@ -6818,7 +6813,7 @@ SQL_API_RC SQL_API_FN                        /* Drop Node Verify              */
 #define SQLE_RC_BADPGN_PROC_DB2AIX -10014    /* Invalid DARI prog name        */
                                              /* format                        */
 
-#define SQLE_RC_BADPGN_PROC SQLE_RC_BADPGN_PROC_DB2NT
+#define SQLE_RC_BADPGN_PROC SQLE_RC_BADPGN_PROC_DB2AIX
 
 #define SQLE_RC_INSMEM_PROC_DB2OS2 -1112     /* Insuf memory to load lib      */
 #define SQLE_RC_INSMEM_PROC_DB2NT -1112      /* Insuf memory to load lib      */
@@ -6827,7 +6822,7 @@ SQL_API_RC SQL_API_FN                        /* Drop Node Verify              */
 #define SQLE_RC_INSMEM_PROC_DB2MAC -1112     /* Insuf memory to load lib      */
 #define SQLE_RC_INSMEM_PROC_DB2AIX -10015    /* Insuf memory to load lib      */
 
-#define SQLE_RC_INSMEM_PROC SQLE_RC_INSMEM_PROC_DB2NT
+#define SQLE_RC_INSMEM_PROC SQLE_RC_INSMEM_PROC_DB2AIX
 
 #define SQLE_RC_SQLDA_DATATYPE -1113         /* Data type in output SQLDA     */
                                              /* changed                       */
@@ -6905,7 +6900,7 @@ SQL_API_RC SQL_API_FN                        /* Drop Node Verify              */
 #define SQLE_RC_INV_CNTRYINFO_DB2AIX -1205   /* Invalid territory             */
                                              /* information                   */
 
-#define SQLE_RC_INV_CNTRYINFO SQLE_RC_INV_CNTRYINFO_DB2NT
+#define SQLE_RC_INV_CNTRYINFO SQLE_RC_INV_CNTRYINFO_DB2AIX
 
 #define SQLE_RC_INV_COMPUTERNAME -1211       /* Invalid Computer Name         */
 #define SQLE_RC_INV_INSTANCENAME -1212       /* Invalid Instance Name         */
@@ -7017,8 +7012,6 @@ SQL_API_RC SQL_API_FN                        /* Drop Node Verify              */
 #define SQLE_RC_INSTANCE_USING -1391         /* Another Instance is using     */
                                              /* the DB                        */
 #define SQLE_RC_INV_DB2PATH -1393            /* Invalid DB2 Path Name         */
-#define SQLE_RC_SERVICE_LOGON_FAILURE -1397  /* The DB2 service failed to     */
-                                             /* logon                         */
 
 #define SQLE_RC_BAD_AUTH -1400               /* Unsupported authentication    */
                                              /* type                          */
@@ -7405,7 +7398,6 @@ SQL_API_RC SQL_API_FN                        /* Stop Database Manager         */
         struct sqlca * pSqlca);              /* SQLCA                         */
 
 /* End of obsolete functions and symbols                                      */
-#pragma pack()
 
 #ifdef __cplusplus 
 }

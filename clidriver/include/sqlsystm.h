@@ -2,8 +2,7 @@
  *
  * Source File Name = SQLSYSTM.H
  *
- *
- * (C) COPYRIGHT International Business Machines Corp. 1993
+ * (C) COPYRIGHT International Business Machines Corp. 1993, 1998
  * All Rights Reserved
  * Licensed Materials - Property of IBM
  *
@@ -13,26 +12,26 @@
  * Function = Include File defining:
  *              Operating System Specific Information
  *
- * Operating System = NT 3.5
+ * Operating System = Linux
  *
  *****************************************************************************/
 
-#ifndef  SQL_H_SQLSYSTM
-   #define SQL_H_SQLSYSTM          /* Permit duplicate Includes */
+#if !defined  SQL_H_SQLSYSTM
+#define SQL_H_SQLSYSTM          /* Permit duplicate Includes */
 
-
-#if !defined DB2NT
-  #define DB2NT     1
+#if !defined DB2LINUX
+   #define DB2LINUX    1
 #endif
 
+/* Operating System Control Parameters */
 
 #if !defined SQL_API_RC
- #define SQL_API_RC      int
- #define SQL_STRUCTURE   struct
- #define SQL_POINTER
- #define SQL_API_FN      __stdcall
- #define SQL_API_INTR    __stdcall
- #define PSQL_API_FN     __stdcall *
+   #define SQL_API_RC      int
+   #define SQL_STRUCTURE   struct
+   #define PSQL_API_FN     *
+   #define SQL_API_FN
+   #define SQL_POINTER
+   #define SQL_API_INTR
 #endif
 
 /******************************************************************************
@@ -51,9 +50,9 @@
 
 #undef _SQLOLDCHAR
 #if defined SQLOLDCHAR
- #define _SQLOLDCHAR     unsigned char
+   #define _SQLOLDCHAR     unsigned char
 #else
- #define _SQLOLDCHAR     char
+   #define _SQLOLDCHAR     char
 #endif
 
 /******************************************************************************
@@ -68,7 +67,12 @@ typedef unsigned char   sqluint8;
 typedef short           sqlint16;
 typedef unsigned short  sqluint16;
 
-#if defined DB2_FORCE_INT32_TYPES_TO_INT
+
+#if defined __LP64__ || defined __PPC64__ || defined __x86_64__ || defined __s390x__
+   #define db2Is64bit
+#endif
+
+#if defined db2Is64bit || defined DB2_FORCE_INT32_TYPES_TO_INT
    typedef int             sqlint32;
    typedef unsigned int    sqluint32;
 #else
@@ -77,22 +81,24 @@ typedef unsigned short  sqluint16;
 #endif
 
 #if !defined SQL_BIGINT_TYPE
-   #if defined _MSC_VER
-      #define SQL_BIGINT_TYPE __int64
-      #define DB2_CONSTRUCT_BIGINT_CONSTANT(db2BigIntConstantValue) db2BigIntConstantValue##i64
+   #if defined db2Is64bit
+      #define SQL_BIGINT_TYPE long
+      #define DB2_CONSTRUCT_BIGINT_CONSTANT(db2BigIntConstantValue) db2BigIntConstantValue##L
    #else
-      #define DB2_CONSTRUCT_BIGINT_CONSTANT(db2BigIntConstantValue) db2BigIntConstantValue##LL
       #define SQL_BIGINT_TYPE long long
+      #define DB2_CONSTRUCT_BIGINT_CONSTANT(db2BigIntConstantValue) db2BigIntConstantValue##LL
    #endif
 #endif
+
 #if !defined SQL_BIGUINT_TYPE
-   #if defined _MSC_VER
-      #define SQL_BIGUINT_TYPE unsigned __int64
+   #if defined db2Is64bit
+      #define SQL_BIGUINT_TYPE unsigned long
    #else
       #define SQL_BIGUINT_TYPE unsigned long long
    #endif
 #endif
-typedef SQL_BIGINT_TYPE  sqlint64;
+
+typedef SQL_BIGINT_TYPE sqlint64;
 typedef SQL_BIGUINT_TYPE sqluint64;
 
 /******************************************************************************
@@ -102,9 +108,7 @@ typedef SQL_BIGUINT_TYPE sqluint64;
 **
 ******************************************************************************/
 
-#if defined _WIN64
-   #define db2Is64bit
-
+#if defined db2Is64bit
    typedef sqlint64        sqlintptr;
    typedef sqluint64       sqluintptr;
 #else

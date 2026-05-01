@@ -12,7 +12,7 @@
 ** Function: Include File defining:
 **             Labels for the SQL Council's SQL States
 ** 
-** Operating System:  Windows NT
+** Operating System: LINUX
 ** 
 ** 
 ** The last five bytes of the SQLCA contain a diagnostic code called
