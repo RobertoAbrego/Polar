@@ -6,18 +6,11 @@ namespace Polar.Services
 {
     public class Db2Service
     {
-        private readonly string _connString;
+        private readonly Db2ConnectionFactory _factory;
 
-        public Db2Service()
+        public Db2Service(Db2ConnectionFactory factory)
         {
-            // 🔥 CORREGIDO: asignar al campo de la clase (_connString)
-            _connString = "Driver=/app/clidriver/lib/libdb2.so;" +
-              "Database=POLAR;" +
-              "Hostname=db2;" +
-              "Port=50000;" +
-              "Protocol=TCPIP;" +
-              "Uid=db2inst1;" +
-              "Pwd=Password123;";
+            _factory = factory;
         }
 
         private string Hash(string input)
@@ -29,11 +22,11 @@ namespace Polar.Services
 
         public bool Login(string email, string password, string imageKey)
         {
-            using var conn = new OdbcConnection(_connString);
+            using var conn = _factory.Create();
             conn.Open();
 
-            var sql = @"SELECT PASSWORD_HASH, IMAGE_KEY 
-                        FROM USUARIO 
+            var sql = @"SELECT PASSWORD_HASH, IMAGE_KEY
+                        FROM USUARIO
                         WHERE EMAIL = ?";
 
             using var cmd = new OdbcCommand(sql, conn);

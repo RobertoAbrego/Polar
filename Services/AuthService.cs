@@ -5,18 +5,16 @@ namespace Polar.Services
 {
     public class AuthService
     {
-        private readonly string _connString =
-        "Driver=/app/clidriver/lib/libdb2.so;" +
-        "Database=POLAR;" +
-        "Hostname=db2;" +
-        "Port=50000;" +
-        "Protocol=TCPIP;" +
-        "Uid=db2inst1;" +
-        "Pwd=Password123;";
+        private readonly Db2ConnectionFactory _factory;
+
+        public AuthService(Db2ConnectionFactory factory)
+        {
+            _factory = factory;
+        }
 
         public bool Login(string email, string password)
         {
-            using var conn = new OdbcConnection(_connString);
+            using var conn = _factory.Create();
             conn.Open();
 
             var sql = "SELECT PASSWORD_HASH FROM USUARIO WHERE EMAIL = ?";
@@ -39,7 +37,7 @@ namespace Polar.Services
 
         public void Register(string email, string password)
         {
-            using var conn = new OdbcConnection(_connString);
+            using var conn = _factory.Create();
             conn.Open();
 
             var key = GetKey();

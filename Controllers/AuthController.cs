@@ -1,49 +1,48 @@
 using Microsoft.AspNetCore.Mvc;
+using Polar.Models;
 using Polar.Services;
 
 namespace Polar.Controllers
 {
     public class AuthController : Controller
     {
-        private readonly AuthService _auth = new AuthService();
+        private readonly AuthService _authService;
 
-        // =========================
-        // LOGIN VIEW
-        // =========================
-        [HttpGet]
+        public AuthController(AuthService authService)
+        {
+            _authService = authService;
+        }
+
         public IActionResult Login()
         {
             return View();
         }
 
-        // LOGIN POST
         [HttpPost]
-        public IActionResult Login(string email, string password)
+        public IActionResult Login(LoginModel model)
         {
-            bool ok = _auth.Login(email, password);
+            if (_authService.Login(model.Email, model.Password))
+            {
+                ViewBag.Message = "Login correcto";
+                return View();
+            }
 
-            if (ok)
-                return Content("LOGIN OK 🔥 Usuario autenticado");
-
-            return Content("LOGIN FAILED 💀 Credenciales incorrectas");
+            ViewBag.Message = "Credenciales incorrectas";
+            return View();
         }
 
-        // =========================
-        // REGISTER VIEW
-        // =========================
-        [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
 
-        // REGISTER POST
         [HttpPost]
-        public IActionResult Register(string email, string password)
+        public IActionResult Register(LoginModel model)
         {
-            _auth.Register(email, password);
+            _authService.Register(model.Email, model.Password);
+            ViewBag.Message = "Usuario registrado";
 
-            return Content("USER CREATED 🔥 Usuario registrado correctamente");
+            return View();
         }
     }
 }
