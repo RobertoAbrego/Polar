@@ -1,49 +1,46 @@
 ﻿version: "3.8"
 
 services:
-
   db2:
-    image: ibmcom/db2
+    image: icr.io/db2_community/db2:11.5.9.0
     container_name: db2
     privileged: true
+
     ports:
       - "50000:50000"
+
     environment:
       LICENSE: accept
       DB2INST1_PASSWORD: Password123
       DBNAME: POLAR
+
     volumes:
       - db2_data:/database
       - ./db2_backup:/database/backup
 
+    healthcheck:
+      test: ["CMD-SHELL", "su - db2inst1 -c 'db2 connect to POLAR user db2inst1 using Password123 >/dev/null 2>&1'"]
+      interval: 30s
+      timeout: 10s
+      retries: 20
+      start_period: 300s
+
   web:
-    image: mcr.microsoft.com/dotnet/sdk:8.0
+    build:
+      context: .
+      dockerfile: Dockerfile
+
     container_name: polar_app_dev
-    working_dir: /app
 
     ports:
       - "8080:8080"
 
     depends_on:
-      - db2
-
-    volumes:
-      - .:/app
-
-    command: >
-      bash -c "apt-get update &&
-      apt-get install -y unixodbc unixodbc-dev libstdc++6 libgcc-s1 libc6 libxml2 &&
-      dotnet restore &&
-      dotnet watch run --urls=http://0.0.0.0:8080"
+      db2:
+        condition: service_healthy
 
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      DB2_HOST: db2
-      DB2_PORT: 50000
-      DB2_DB: POLAR
-      DB2_USER: db2inst1
-      DB2_PASSWORD: Password123
-      LD_LIBRARY_PATH: /app/clidriver/lib
 
 volumes:
   db2_data:
