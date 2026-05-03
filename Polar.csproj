@@ -7,17 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="clidriver\db2dump\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include=".github\ISSUE_TEMPLATE\bug_report.md" />
-    <None Include=".github\ISSUE_TEMPLATE\feature_request.md" />
-    <None Include=".github\pull-request-template.md" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.Data.Odbc" Version="10.0.7" />
+    <PackageReference Include="Net.IBM.Data.Db2-lnx" Version="9.0.0.400" />
   </ItemGroup>
 
 </Project>

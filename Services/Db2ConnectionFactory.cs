@@ -1,21 +1,20 @@
-using System.Data.Odbc;
+using IBM.Data.Db2;
 
 namespace Polar.Services
 {
     public class Db2ConnectionFactory
     {
-        private readonly string _connectionString =
-            "Driver=/opt/ibm/clidriver/lib/libdb2.so;" +
-            "Database=POLAR;" +
-            "Hostname=db2;" +
-            "Port=50000;" +
-            "Protocol=TCPIP;" +
-            "Uid=db2inst1;" +
-            "Pwd=Password123;";
+        private readonly string _connectionString;
 
-        public OdbcConnection Create()
+        public Db2ConnectionFactory(IConfiguration configuration)
         {
-            return new OdbcConnection(_connectionString);
+            _connectionString = configuration.GetConnectionString("DB2")
+                ?? throw new InvalidOperationException("Connection string DB2 no encontrada.");
+        }
+
+        public DB2Connection Create()
+        {
+            return new DB2Connection(_connectionString);
         }
     }
 }

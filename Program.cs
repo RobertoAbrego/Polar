@@ -6,9 +6,10 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddSingleton<Db2ConnectionFactory>();
 builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<Db2Service>();
 
 var app = builder.Build();
+
+
 
 if (!app.Environment.IsDevelopment())
 {
