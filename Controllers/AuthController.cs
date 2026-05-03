@@ -21,13 +21,20 @@ namespace Polar.Controllers
         [HttpPost]
         public IActionResult Login(LoginModel model)
         {
-            if (_authService.Login(model.Email, model.Password))
+            if (string.IsNullOrWhiteSpace(model.Email) ||
+                string.IsNullOrWhiteSpace(model.Password))
             {
-                ViewBag.Message = "Login correcto";
+                ViewBag.Message = "⚠️ Debes completar todos los campos";
                 return View();
             }
 
-            ViewBag.Message = "Credenciales incorrectas";
+            if (_authService.Login(model.Email, model.Password))
+            {
+                ViewBag.Message = "✅ Inicio de sesión exitoso";
+                return View();
+            }
+
+            ViewBag.Message = "❌ Cuenta o contraseña incorrecta";
             return View();
         }
 
@@ -37,10 +44,24 @@ namespace Polar.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register(LoginModel model)
+        public IActionResult Register(RegisterModel model)
         {
-            _authService.Register(model.Email, model.Password);
-            ViewBag.Message = "Usuario registrado";
+            if (string.IsNullOrWhiteSpace(model.Email) ||
+                string.IsNullOrWhiteSpace(model.Password))
+            {
+                ViewBag.Message = "⚠️ Debes completar todos los campos";
+                return View();
+            }
+
+            try
+            {
+                _authService.Register(model.Email, model.Password);
+                ViewBag.Message = "✅ Usuario registrado correctamente";
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Message = $"❌ Error al registrar: {ex.Message}";
+            }
 
             return View();
         }

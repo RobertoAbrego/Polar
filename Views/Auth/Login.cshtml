@@ -2,12 +2,33 @@
 
 <h2>Login POLAR</h2>
 
-<form method="post">
-    <input name="Email" placeholder="Email" />
+@if (ViewBag.Message != null)
+{
+    <div style="padding:10px; margin-bottom:15px; border:1px solid #ccc;">
+        @ViewBag.Message
+    </div>
+}
+
+<form method="post" asp-action="Login">
+    <div>
+        <label>Email</label><br />
+        <input asp-for="Email" />
+    </div>
+
     <br />
 
-    <input name="Password" type="password" placeholder="Password" />
+    <div>
+        <label>Password</label><br />
+        <input asp-for="Password" type="password" />
+    </div>
+
     <br />
 
-    <button type="submit">Login</button>
+    <button type="submit">Iniciar sesión</button>
 </form>
+
+<br />
+
+<a asp-controller="Auth" asp-action="Register">
+    Registrarse
+</a>
