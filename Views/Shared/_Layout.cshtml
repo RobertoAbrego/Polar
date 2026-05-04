@@ -1,81 +1,139 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Polar</title>
 
-    <script type="importmap"></script>
-
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Polar.styles.css" asp-append-version="true" />
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico" />
 </head>
-<body>
-    <header class="site-header">
-        <nav class="navbar navbar-expand-lg navbar-dark navbar-polar py-3">
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- NAVBAR -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm py-3">
             <div class="container">
-                <a class="navbar-brand brand-polar d-flex align-items-center gap-2" asp-area="" asp-controller="Home" asp-action="Index">
-                    <span class="brand-mark">❄</span>
-                    <span>Polar</span>
+
+                <a class="navbar-brand fw-bold d-flex align-items-center gap-2"
+                asp-controller="Home"
+                asp-action="Index">
+            <img src="~/images/logo.jpeg"
+                alt="Polar"
+                width="32"
+                height="32"
+                class="rounded-circle" />
+                    Polar
                 </a>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#polarNavbar"
-                        aria-controls="polarNavbar" aria-expanded="false" aria-label="Abrir navegación">
+                <button class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#polarNavbar">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
                 <div class="collapse navbar-collapse" id="polarNavbar">
-                    <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+
+                    <ul class="navbar-nav me-auto">
+
                         <li class="nav-item">
-                            <a class="nav-link nav-polar-link" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">
+                                Inicio
+                            </a>
                         </li>
+
                         <li class="nav-item">
-                            <a class="nav-link nav-polar-link" asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="consejos">Consejos</a>
+                            <a class="nav-link" asp-controller="Home" asp-action="Privacy">
+                                Privacidad
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link nav-polar-link" asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="tareas">Tareas</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link nav-polar-link" asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="impacto">Impacto</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link nav-polar-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad</a>
-                        </li>
+
                     </ul>
+
+                    <ul class="navbar-nav">
+
+                        @if (Context.Session.GetString("UserEmail") == null)
+                        {
+                            <li class="nav-item me-2">
+                                <a class="btn btn-outline-light"
+                                   asp-controller="Auth"
+                                   asp-action="Login">
+                                    Iniciar sesión
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="btn btn-success"
+                                   asp-controller="Auth"
+                                   asp-action="Register">
+                                    Crear cuenta
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item d-flex align-items-center text-light me-3">
+                                👤 @Context.Session.GetString("UserEmail")
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="btn btn-danger"
+                                   asp-controller="Auth"
+                                   asp-action="Logout">
+                                    Cerrar sesión
+                                </a>
+                            </li>
+                        }
+
+                    </ul>
+
                 </div>
             </div>
         </nav>
     </header>
 
-    <main role="main" class="main-shell">
-        <div class="container py-4 py-lg-5">
-            @RenderBody()
-        </div>
+    <!-- CONTENIDO -->
+    <main class="container my-4 flex-grow-1">
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["Success"]
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                </button>
+            </div>
+        }
+
+        @RenderBody()
+
     </main>
 
-    <footer class="footer-polar mt-auto">
-        <div class="container py-4">
-            <div class="row g-3 align-items-center">
-                <div class="col-md-6">
-                    <div class="footer-brand">Polar</div>
-                    <p class="footer-text mb-0">
-                        Concientización ambiental, hábitos sostenibles y acciones simples para reducir el impacto ecológico.
-                    </p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <a class="footer-link me-3" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
-                    <a class="footer-link me-3" asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="tareas">Tareas</a>
-                    <a class="footer-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad</a>
-                    <div class="footer-copy mt-2">© 2026 Polar</div>
-                </div>
-            </div>
+    <!-- FOOTER -->
+    <footer class="bg-dark text-light mt-auto py-4">
+        <div class="container text-center">
+            <p class="mb-1 fw-bold">Polar</p>
+            <small>
+                Plataforma ecológica para generar conciencia ambiental 🌱
+            </small>
+            <br />
+            <small>© 2026 Polar</small>
         </div>
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

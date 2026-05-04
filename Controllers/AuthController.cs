@@ -30,8 +30,11 @@ namespace Polar.Controllers
 
             if (_authService.Login(model.Email, model.Password))
             {
-                ViewBag.Message = "✅ Inicio de sesión exitoso";
-                return View();
+                HttpContext.Session.SetString("UserEmail", model.Email);
+
+                TempData["Success"] = "✅ Inicio de sesión exitoso";
+
+                return RedirectToAction("Index", "Home");
             }
 
             ViewBag.Message = "❌ Cuenta o contraseña incorrecta";
@@ -56,14 +59,25 @@ namespace Polar.Controllers
             try
             {
                 _authService.Register(model.Email, model.Password);
-                ViewBag.Message = "✅ Usuario registrado correctamente";
+
+                TempData["Success"] = "✅ Usuario registrado correctamente";
+
+                return RedirectToAction("Login");
             }
             catch (Exception ex)
             {
                 ViewBag.Message = $"❌ Error al registrar: {ex.Message}";
+                return View();
             }
+        }
 
-            return View();
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+
+            TempData["Success"] = "Sesión cerrada";
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }
