@@ -1,34 +1,112 @@
 @model Polar.Models.RegisterModel
 
-<h2>Registro</h2>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    
+    <div class="card shadow-lg p-4" style="width: 400px; border-radius: 15px;">
+        
+        <div class="text-center mb-4">
+            <h2 class="fw-bold">Polar</h2>
+            <p class="text-muted">Crea una nueva cuenta</p>
+        </div>
 
-@if (ViewBag.Message != null)
-{
-    <div style="padding:10px; margin-bottom:15px; border:1px solid #ccc;">
-        @ViewBag.Message
+        @if (ViewBag.Message != null)
+        {
+            <div class="alert alert-warning text-center">
+                @ViewBag.Message
+            </div>
+        }
+
+        <form method="post" asp-action="Register" id="registerForm" novalidate>
+
+            <!-- EMAIL -->
+            <div class="mb-3">
+                <label class="form-label">Correo electrónico</label>
+                <input asp-for="Email" id="email" type="email"
+                       class="form-control"
+                       placeholder="ejemplo@correo.com"
+                       required />
+                <small class="text-danger d-none" id="emailError">
+                    Ingresa un correo válido
+                </small>
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="mb-3">
+                <label class="form-label">Contraseña</label>
+                <input asp-for="Password" id="password" type="password"
+                       class="form-control"
+                       placeholder="••••••••"
+                       required minlength="6" />
+                <small class="text-danger d-none" id="passwordError">
+                    Mínimo 6 caracteres
+                </small>
+            </div>
+
+            <!-- CONFIRM PASSWORD -->
+            <div class="mb-3">
+                <label class="form-label">Confirmar contraseña</label>
+                <input id="confirmPassword" type="password"
+                       class="form-control"
+                       placeholder="••••••••"
+                       required />
+                <small class="text-danger d-none" id="confirmError">
+                    Las contraseñas no coinciden
+                </small>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">
+                Registrarse
+            </button>
+        </form>
+
+        <div class="text-center mt-3">
+            <span class="text-muted">¿Ya tienes cuenta?</span><br />
+            <a asp-controller="Auth" asp-action="Login" class="fw-bold">
+                Iniciar sesión
+            </a>
+        </div>
+
     </div>
-}
+</div>
 
-<form method="post" asp-action="Register">
-    <div>
-        <label>Email</label><br />
-        <input asp-for="Email" />
-    </div>
+<script>
+document.getElementById("registerForm").addEventListener("submit", function(e) {
 
-    <br />
+    let valid = true;
 
-    <div>
-        <label>Password</label><br />
-        <input asp-for="Password" type="password" />
-    </div>
+    let email = document.getElementById("email");
+    let password = document.getElementById("password");
+    let confirm = document.getElementById("confirmPassword");
 
-    <br />
+    let emailError = document.getElementById("emailError");
+    let passwordError = document.getElementById("passwordError");
+    let confirmError = document.getElementById("confirmError");
 
-    <button type="submit">Crear cuenta</button>
-</form>
+    // reset errores
+    emailError.classList.add("d-none");
+    passwordError.classList.add("d-none");
+    confirmError.classList.add("d-none");
 
-<br />
+    // Validación email (HTML5 ya valida formato)
+    if (!email.checkValidity()) {
+        emailError.classList.remove("d-none");
+        valid = false;
+    }
 
-<a asp-controller="Auth" asp-action="Login">
-    Volver al login
-</a>
+    // Validación password
+    if (password.value.length < 6) {
+        passwordError.classList.remove("d-none");
+        valid = false;
+    }
+
+    // Confirmación de contraseña
+    if (password.value !== confirm.value) {
+        confirmError.classList.remove("d-none");
+        valid = false;
+    }
+
+    if (!valid) {
+        e.preventDefault();
+    }
+});
+</script>

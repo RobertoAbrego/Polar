@@ -1,34 +1,82 @@
 @model Polar.Models.LoginModel
 
-<h2>Login POLAR</h2>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    
+    <div class="card shadow-lg p-4" style="width: 400px; border-radius: 15px;">
+        
+        <div class="text-center mb-4">
+            <h2 class="fw-bold">Polar</h2>
+            <p class="text-muted">Inicia sesión en tu cuenta</p>
+        </div>
 
-@if (ViewBag.Message != null)
-{
-    <div style="padding:10px; margin-bottom:15px; border:1px solid #ccc;">
-        @ViewBag.Message
+        @if (ViewBag.Message != null)
+        {
+            <div class="alert alert-warning text-center">
+                @ViewBag.Message
+            </div>
+        }
+
+        <form method="post" asp-action="Login" id="loginForm" novalidate>
+
+            <!-- EMAIL -->
+            <div class="mb-3">
+                <label class="form-label">Correo electrónico</label>
+                <input asp-for="Email" id="email" type="email" class="form-control" placeholder="ejemplo@correo.com" required />
+                <small class="text-danger d-none" id="emailError">Ingresa un correo válido</small>
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="mb-3">
+                <label class="form-label">Contraseña</label>
+                <input asp-for="Password" id="password" type="password" class="form-control" placeholder="••••••••" required minlength="6" />
+                <small class="text-danger d-none" id="passwordError">Mínimo 6 caracteres</small>
+            </div>
+
+            <button type="submit" class="btn btn-success w-100">
+                Iniciar sesión
+            </button>
+        </form>
+
+        <div class="text-center mt-3">
+            <span class="text-muted">¿No tienes cuenta?</span><br />
+            <a asp-controller="Auth" asp-action="Register" class="fw-bold">
+                Crear cuenta
+            </a>
+        </div>
+
     </div>
-}
+</div>
 
-<form method="post" asp-action="Login">
-    <div>
-        <label>Email</label><br />
-        <input asp-for="Email" />
-    </div>
+<script>
+document.getElementById("loginForm").addEventListener("submit", function(e) {
 
-    <br />
+    let valid = true;
 
-    <div>
-        <label>Password</label><br />
-        <input asp-for="Password" type="password" />
-    </div>
+    let email = document.getElementById("email");
+    let password = document.getElementById("password");
 
-    <br />
+    let emailError = document.getElementById("emailError");
+    let passwordError = document.getElementById("passwordError");
 
-    <button type="submit">Iniciar sesión</button>
-</form>
+    // Reset errores
+    emailError.classList.add("d-none");
+    passwordError.classList.add("d-none");
 
-<br />
+    // Validación email
+    if (!email.value.includes("@@")) {
+        emailError.classList.remove("d-none");
+        valid = false;
+    }
 
-<a asp-controller="Auth" asp-action="Register">
-    Registrarse
-</a>
+    // Validación password
+    if (password.value.length < 6) {
+        passwordError.classList.remove("d-none");
+        valid = false;
+    }
+
+    // Evita envío si hay errores
+    if (!valid) {
+        e.preventDefault();
+    }
+});
+</script>
