@@ -1,6 +1,40 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Http
+
+@{
     ViewData["Title"] = "Inicio";
 }
+@{
+    var feed = ViewBag.Feed as List<dynamic> ?? new List<dynamic>();
+}
+@if (Context.Session.GetString("UserEmail") != null)
+{
+    <div class="section-card mb-4">
+        <span class="badge-polar mb-3">Tu espacio</span>
+
+        <h2 class="section-title">
+            Bienvenido 👋 @Context.Session.GetString("UserEmail").Split('@')[0]
+        </h2>
+
+        <p class="section-subtitle">
+            Comparte tus acciones ecológicas y mira lo que otros están haciendo.
+        </p>
+
+        <div class="d-flex gap-3 mt-3 flex-wrap">
+            <a class="btn btn-polar-primary"
+               asp-controller="Evidencia"
+               asp-action="Feed">
+                🌍 Ver Feed
+            </a>
+
+            <a class="btn btn-polar-secondary"
+               asp-controller="Evidencia"
+               asp-action="Crear">
+                📸 Subir evidencia
+            </a>
+        </div>
+    </div>
+}
+
 
 <div class="hero-panel mb-4 mb-lg-5">
     <div class="row align-items-center g-4">
@@ -164,6 +198,7 @@
 </div>
 
 <div class="section-card" id="impacto">
+
     <div class="row align-items-center g-3">
         <div class="col-lg-8">
             <span class="badge-polar mb-3">Impacto</span>
@@ -177,3 +212,59 @@
         </div>
     </div>
 </div>
+
+<div class="section-card mt-5">
+    <h2 class="section-title">🌍 Feed de la comunidad</h2>
+
+    @foreach (var item in feed)
+    {
+        <div class="card mb-3 p-3">
+            <strong>@item.Email</strong>
+            <br />
+
+            <img src="@item.Imagen" style="max-width:300px;" class="mt-2 rounded" />
+
+            <br />
+            <small class="text-muted">@item.Fecha</small>
+        </div>
+    }
+</div>
+
+@if (Context.Session.GetString("UserEmail") != null)
+{
+    <div class="section-card mt-5">
+        <span class="badge-polar mb-3">Comunidad</span>
+        <h2 class="section-title">Feed de evidencias</h2>
+        <p class="section-subtitle">
+            Mira lo que otros usuarios están haciendo por el planeta 🌎
+        </p>
+
+        <div class="mt-4">
+
+            @if (ViewBag.Feed != null)
+            {
+                foreach (var item in ViewBag.Feed)
+                {
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between mb-2">
+                                <strong>@item.Email</strong>
+                                <small class="text-muted">@item.Fecha</small>
+                            </div>
+
+                            <img src="@item.Imagen"
+                                 class="img-fluid rounded mb-2" />
+
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>No hay publicaciones aún.</p>
+            }
+
+        </div>
+    </div>
+}

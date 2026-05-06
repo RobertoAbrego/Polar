@@ -40,7 +40,7 @@ namespace Polar.Services
             return decrypted == password;
         }
 
-        public void Register(string email, string password)
+        public void Register(string nombre, string email, string password)
         {
             using var conn = _factory.Create();
             conn.Open();
@@ -49,15 +49,31 @@ namespace Polar.Services
             var encrypted = CryptoService.Encrypt(password, key);
 
             var sql = @"INSERT INTO DB2INST1.USUARIO
-                        (EMAIL, PASSWORD_ENCRYPTED)
-                        VALUES (@email, @pass)";
+                        (NOMBRE, EMAIL, PASSWORD_ENCRYPTED)
+                        VALUES (@nombre, @email, @pass)";
 
             using var cmd = new DB2Command(sql, conn);
 
+            cmd.Parameters.Add(new DB2Parameter("@nombre", nombre));
             cmd.Parameters.Add(new DB2Parameter("@email", email));
             cmd.Parameters.Add(new DB2Parameter("@pass", encrypted));
 
             cmd.ExecuteNonQuery();
+        }
+
+        public string? GetNombreByEmail(string email)
+        {
+            using var conn = _factory.Create();
+            conn.Open();
+
+            var sql = "SELECT NOMBRE FROM DB2INST1.USUARIO WHERE EMAIL = @email";
+
+            using var cmd = new DB2Command(sql, conn);
+            cmd.Parameters.Add(new DB2Parameter("@email", email));
+
+            var result = cmd.ExecuteScalar();
+
+            return result?.ToString();
         }
 
         private string GetKey()

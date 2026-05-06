@@ -13,11 +13,13 @@ namespace Polar.Controllers
             _authService = authService;
         }
 
+        // 🔹 GET LOGIN
         public IActionResult Login()
         {
             return View();
         }
 
+        // 🔹 POST LOGIN
         [HttpPost]
         public IActionResult Login(LoginModel model)
         {
@@ -28,12 +30,20 @@ namespace Polar.Controllers
                 return View();
             }
 
+            // 🔥 AQUÍ VA LOGIN (NO REGISTER)
             if (_authService.Login(model.Email, model.Password))
             {
                 HttpContext.Session.SetString("UserEmail", model.Email);
 
-                TempData["Success"] = "✅ Inicio de sesión exitoso";
+                // 🔥 obtener nombre desde DB
+                var nombre = _authService.GetNombreByEmail(model.Email);
 
+                if (nombre != null)
+                {
+                    HttpContext.Session.SetString("UserName", nombre);
+                }
+
+                TempData["Success"] = "✅ Inicio de sesión exitoso";
                 return RedirectToAction("Index", "Home");
             }
 
@@ -41,15 +51,18 @@ namespace Polar.Controllers
             return View();
         }
 
+        // 🔹 GET REGISTER
         public IActionResult Register()
         {
             return View();
         }
 
+        // 🔹 POST REGISTER
         [HttpPost]
         public IActionResult Register(RegisterModel model)
         {
-            if (string.IsNullOrWhiteSpace(model.Email) ||
+            if (string.IsNullOrWhiteSpace(model.Nombre) ||
+                string.IsNullOrWhiteSpace(model.Email) ||
                 string.IsNullOrWhiteSpace(model.Password))
             {
                 ViewBag.Message = "⚠️ Debes completar todos los campos";
@@ -58,10 +71,10 @@ namespace Polar.Controllers
 
             try
             {
-                _authService.Register(model.Email, model.Password);
+                // 🔥 AQUÍ SÍ VA REGISTER
+                _authService.Register(model.Nombre, model.Email, model.Password);
 
                 TempData["Success"] = "✅ Usuario registrado correctamente";
-
                 return RedirectToAction("Login");
             }
             catch (Exception ex)
@@ -71,12 +84,12 @@ namespace Polar.Controllers
             }
         }
 
+        // 🔹 LOGOUT
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
 
             TempData["Success"] = "Sesión cerrada";
-
             return RedirectToAction("Index", "Home");
         }
     }

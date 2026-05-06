@@ -1,24 +1,39 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Polar.Models;
+using Polar.Services;
 
-namespace Polar.Controllers;
-
-public class HomeController : Controller
+namespace Polar.Controllers
 {
-    public IActionResult Index()
+    public class HomeController : Controller
     {
-        return View();
-    }
+        private readonly EvidenciaService _ev;
 
-    public IActionResult Privacy()
-    {
-        return View();
-    }
+        // 🔥 INYECCIÓN DEL SERVICE
+        public HomeController(EvidenciaService ev)
+        {
+            _ev = ev;
+        }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        // 🔥 INDEX CON FEED
+        public IActionResult Index()
+        {
+            ViewBag.Feed = _ev.GetFeed();
+            return View();
+        }
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel
+            {
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            });
+        }
     }
 }

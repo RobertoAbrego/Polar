@@ -1,0 +1,12 @@
+<h2>Feed de evidencias</h2>
+
+@foreach (var item in Model)
+{
+    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+        <strong>@item.Email</strong>
+        <br />
+        <img src="@item.Imagen" width="300" />
+        <br />
+        <small>@item.Fecha</small>
+    </div>
+}

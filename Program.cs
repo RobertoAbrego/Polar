@@ -17,6 +17,7 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSingleton<Db2ConnectionFactory>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<EvidenciaService>();
 
 var app = builder.Build();
 
@@ -30,6 +31,8 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseSession();
+
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",

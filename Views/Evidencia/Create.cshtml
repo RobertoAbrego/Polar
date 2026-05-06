@@ -1,0 +1,14 @@
+<h2>Subir evidencia</h2>
+
+<form method="post" enctype="multipart/form-data">
+    <input type="number" name="misionId" placeholder="Misión ID" required />
+    <br /><br />
+    <input type="file" name="imagen" required />
+    <br /><br />
+    <button type="submit">Subir</button>
+</form>
+
+@if(ViewBag.Message != null)
+{
+    <p>@ViewBag.Message</p>
+}

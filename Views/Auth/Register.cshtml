@@ -1,12 +1,46 @@
 @model Polar.Models.RegisterModel
 
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+<style>
+    .auth-card {
+        width: 420px;
+        border-radius: 18px;
+        border: none;
+    }
+
+    .auth-title {
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    .auth-subtitle {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .btn-primary {
+        border-radius: 10px;
+        padding: 10px;
+        font-weight: 600;
+    }
+
+    .logo-title {
+        font-size: 1.6rem;
+        font-weight: bold;
+    }
+</style>
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 85vh;">
     
-    <div class="card shadow-lg p-4" style="width: 400px; border-radius: 15px;">
+    <div class="card shadow-lg p-4 auth-card">
         
         <div class="text-center mb-4">
-            <h2 class="fw-bold">Polar</h2>
-            <p class="text-muted">Crea una nueva cuenta</p>
+            <div class="logo-title">🌱 Polar</div>
+            <div class="auth-subtitle">Crea una nueva cuenta</div>
         </div>
 
         @if (ViewBag.Message != null)
@@ -17,6 +51,16 @@
         }
 
         <form method="post" asp-action="Register" id="registerForm" novalidate>
+
+            <!-- NOMBRE -->
+            <div class="mb-3">
+                <label class="form-label">Nombre</label>
+                <input asp-for="Nombre"
+                       type="text"
+                       class="form-control"
+                       placeholder="Tu nombre"
+                       required />
+            </div>
 
             <!-- EMAIL -->
             <div class="mb-3">
@@ -54,14 +98,14 @@
                 </small>
             </div>
 
-            <button type="submit" class="btn btn-primary w-100">
-                Registrarse
+            <button type="submit" class="btn btn-primary w-100 mt-2">
+                Crear cuenta
             </button>
         </form>
 
-        <div class="text-center mt-3">
+        <div class="text-center mt-4">
             <span class="text-muted">¿Ya tienes cuenta?</span><br />
-            <a asp-controller="Auth" asp-action="Login" class="fw-bold">
+            <a asp-controller="Auth" asp-action="Login" class="fw-bold text-decoration-none">
                 Iniciar sesión
             </a>
         </div>
@@ -87,19 +131,19 @@ document.getElementById("registerForm").addEventListener("submit", function(e) {
     passwordError.classList.add("d-none");
     confirmError.classList.add("d-none");
 
-    // Validación email (HTML5 ya valida formato)
+    // email
     if (!email.checkValidity()) {
         emailError.classList.remove("d-none");
         valid = false;
     }
 
-    // Validación password
+    // password
     if (password.value.length < 6) {
         passwordError.classList.remove("d-none");
         valid = false;
     }
 
-    // Confirmación de contraseña
+    // confirmación
     if (password.value !== confirm.value) {
         confirmError.classList.remove("d-none");
         valid = false;

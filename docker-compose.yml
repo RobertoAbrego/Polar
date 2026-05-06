@@ -1,6 +1,4 @@
-﻿version: "3.8"
-
-services:
+﻿services:
   db2:
     image: icr.io/db2_community/db2:11.5.9.0
     container_name: db2
