@@ -12,7 +12,7 @@ namespace Polar.Controllers
             _service = service;
         }
 
-        public IActionResult Feed()
+        public IActionResult Index()
         {
             var email = HttpContext.Session.GetString("UserEmail");
 
