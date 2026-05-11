@@ -1,14 +1,22 @@
 <h2>Subir evidencia</h2>
 
 <form method="post" enctype="multipart/form-data">
-    <input type="number" name="misionId" placeholder="Misión ID" required />
-    <br /><br />
-    <input type="file" name="imagen" required />
-    <br /><br />
-    <button type="submit">Subir</button>
-</form>
 
-@if(ViewBag.Message != null)
-{
-    <p>@ViewBag.Message</p>
-}
+    <div class="mb-3">
+        <label>Misión ID</label>
+        <input type="number"
+               name="misionId"
+               class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <input type="file"
+               name="imagen"
+               class="form-control" />
+    </div>
+
+    <button class="btn btn-success">
+        Subir
+    </button>
+
+</form>

@@ -7,8 +7,7 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
-## Base de datos
-db2_backup/
+
 
 # User-specific files
 *.rsuser

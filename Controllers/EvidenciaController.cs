@@ -46,7 +46,7 @@ namespace Polar.Controllers
 
             _service.Create(email, misionId, imagen);
 
-            return RedirectToAction("Feed", "Feed");
+            return RedirectToAction("Index", "Feed");
         }
     }
 }
