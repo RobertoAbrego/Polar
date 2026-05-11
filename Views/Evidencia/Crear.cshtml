@@ -1,22 +1,52 @@
-<h2>Subir evidencia</h2>
+@model dynamic
 
-<form method="post" enctype="multipart/form-data">
+<h2 class="mb-4">Misiones ecológicas</h2>
 
-    <div class="mb-3">
-        <label>Misión ID</label>
-        <input type="number"
-               name="misionId"
-               class="form-control" />
+<div class="row">
+
+@foreach (var m in Model)
+{
+    <div class="col-md-4 mb-4">
+
+        <div class="card shadow-sm h-100">
+
+            <div class="card-body">
+
+                <h4>@m.Titulo</h4>
+
+                <p>@m.Descripcion</p>
+
+                <span class="badge bg-success">
+                    @m.Tipo
+                </span>
+
+                <p class="mt-2 fw-bold">
+                    +@m.Puntos puntos
+                </p>
+
+                <form method="post"
+                      enctype="multipart/form-data">
+
+                    <input type="hidden"
+                           name="misionId"
+                           value="@m.Id" />
+
+                    <input type="file"
+                           name="imagen"
+                           class="form-control mb-3"
+                           required />
+
+                    <button class="btn btn-success w-100">
+                        Subir evidencia
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
     </div>
+}
 
-    <div class="mb-3">
-        <input type="file"
-               name="imagen"
-               class="form-control" />
-    </div>
-
-    <button class="btn btn-success">
-        Subir
-    </button>
-
-</form>
+</div>

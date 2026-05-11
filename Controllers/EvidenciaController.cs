@@ -15,16 +15,18 @@ namespace Polar.Controllers
         // =========================
         // 📸 FORM
         // =========================
+
         [HttpGet]
         public IActionResult Crear()
         {
-            // validar sesión
             var email = HttpContext.Session.GetString("UserEmail");
 
             if (email == null)
                 return RedirectToAction("Login", "Auth");
 
-            return View();
+            var misiones = _service.GetMisiones();
+
+            return View(misiones);
         }
 
         // =========================

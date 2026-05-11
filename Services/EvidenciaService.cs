@@ -13,6 +13,35 @@ namespace Polar.Services
             _env = env;
         }
 
+        public List<dynamic> GetMisiones()
+        {
+            var list = new List<dynamic>();
+
+            using var conn = _factory.Create();
+            conn.Open();
+
+            var sql = @"SELECT ID, TITULO, DESCRIPCION, TIPO, PUNTOS
+                        FROM DB2INST1.MISION";
+
+            using var cmd = new DB2Command(sql, conn);
+            using var reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                list.Add(new
+                {
+                    Id = reader.GetInt32(0),
+                    Titulo = reader.GetString(1),
+                    Descripcion = reader.GetString(2),
+                    Tipo = reader.GetString(3),
+                    Puntos = reader.GetInt32(4)
+                });
+            }
+
+            return list;
+        }
+
+
         // 🔥 CREAR EVIDENCIA + IMAGEN
         public void Create(string email, int misionId, IFormFile imagen)
         {
@@ -70,6 +99,34 @@ namespace Polar.Services
                 cmdImg.ExecuteNonQuery();
             }
         }
+        //Comentarios
+
+            public void AddComment(int publicacionId, string email, string contenido)
+            {
+                using var conn = _factory.Create();
+                conn.Open();
+
+                var getUser = "SELECT ID FROM DB2INST1.USUARIO WHERE EMAIL = @e";
+
+                using var cmdUser = new DB2Command(getUser, conn);
+                cmdUser.Parameters.Add(new DB2Parameter("@e", email));
+
+                var userId = Convert.ToInt32(cmdUser.ExecuteScalar());
+
+                var sql = @"
+                    INSERT INTO DB2INST1.COMENTARIO
+                    (PUBLICACIONID, USUARIOID, CONTENIDO)
+                    VALUES (@p, @u, @c)";
+
+                using var cmd = new DB2Command(sql, conn);
+
+                cmd.Parameters.Add(new DB2Parameter("@p", publicacionId));
+                cmd.Parameters.Add(new DB2Parameter("@u", userId));
+                cmd.Parameters.Add(new DB2Parameter("@c", contenido));
+
+                cmd.ExecuteNonQuery();
+            }
+
 
         // 🔥 FEED (ESTO ES LO NUEVO)
         public List<dynamic> GetFeed()
@@ -79,11 +136,20 @@ namespace Polar.Services
             using var conn = _factory.Create();
             conn.Open();
 
-            var sql = @"
-                SELECT U.EMAIL, EI.RUTAIMAGEN, E.FECHA
+            var sql = @"SELECT 
+                    U.NOMBRE,
+                    M.TITULO,
+                    M.TIPO,
+                    M.PUNTOS,
+                    EI.RUTAIMAGEN,
+                    E.FECHA
                 FROM DB2INST1.EVIDENCIA E
-                JOIN DB2INST1.USUARIO U ON U.ID = E.USUARIOID
-                JOIN DB2INST1.EVIDENCIAIMAGEN EI ON EI.EVIDENCIAID = E.ID
+                JOIN DB2INST1.USUARIO U 
+                    ON U.ID = E.USUARIOID
+                JOIN DB2INST1.MISION M 
+                    ON M.ID = E.MISIONID
+                JOIN DB2INST1.EVIDENCIAIMAGEN EI 
+                    ON EI.EVIDENCIAID = E.ID
                 ORDER BY E.FECHA DESC";
 
             using var cmd = new DB2Command(sql, conn);
@@ -91,12 +157,15 @@ namespace Polar.Services
 
             while (reader.Read())
             {
-                list.Add(new
-                {
-                    Email = reader.GetString(0),
-                    Imagen = reader.GetString(1),
-                    Fecha = reader.GetDateTime(2)
-                });
+            list.Add(new
+            {
+                Nombre = reader.GetString(0),
+                Titulo = reader.GetString(1),
+                Tipo = reader.GetString(2),
+                Puntos = reader.GetInt32(3),
+                Imagen = reader.GetString(4),
+                Fecha = reader.GetDateTime(5)
+            });
             }
 
             return list;

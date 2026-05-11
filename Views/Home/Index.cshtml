@@ -213,22 +213,7 @@
     </div>
 </div>
 
-<div class="section-card mt-5">
-    <h2 class="section-title">🌍 Feed de la comunidad</h2>
 
-    @foreach (var item in feed)
-    {
-        <div class="card mb-3 p-3">
-            <strong>@item.Email</strong>
-            <br />
-
-            <img src="@item.Imagen" style="max-width:300px;" class="mt-2 rounded" />
-
-            <br />
-            <small class="text-muted">@item.Fecha</small>
-        </div>
-    }
-</div>
 
 @if (Context.Session.GetString("UserEmail") != null)
 {
@@ -245,19 +230,68 @@
             {
                 foreach (var item in ViewBag.Feed)
                 {
-                    <div class="card mb-4 shadow-sm">
-                        <div class="card-body">
+                <div class="card border-0 shadow-sm mb-4 overflow-hidden">
 
-                            <div class="d-flex justify-content-between mb-2">
-                                <strong>@item.Email</strong>
-                                <small class="text-muted">@item.Fecha</small>
+                    <img src="@item.Imagen"
+                        class="img-fluid"
+                        style="width:100%; max-height:500px; object-fit:cover;" />
+
+                    <div class="card-body">
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+
+                            <div class="d-flex align-items-center gap-2">
+
+                                <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center"
+                                    style="width:42px;height:42px;font-weight:bold;">
+
+                                    @item.Nombre.Substring(0,1).ToUpper()
+
+                                </div>
+
+                                <div>
+
+                                    <div class="fw-bold">
+                                        @item.Nombre
+                                    </div>
+
+                                    <small class="text-muted">
+                                        @item.Fecha
+                                    </small>
+
+                                </div>
+
                             </div>
 
-                            <img src="@item.Imagen"
-                                 class="img-fluid rounded mb-2" />
+                            <span class="badge bg-success">
+                                +@item.Puntos pts
+                            </span>
 
                         </div>
+
+                        <h5 class="fw-bold mb-1">
+                            🌱 @item.Titulo
+                        </h5>
+
+                        <p class="text-muted mb-3">
+                            @item.Tipo
+                        </p>
+
+                        <div class="d-flex gap-2">
+
+                            <button class="btn btn-outline-success btn-sm">
+                                💬 Comentar
+                            </button>
+
+                            <button class="btn btn-outline-danger btn-sm">
+                                🗑 Eliminar
+                            </button>
+
+                        </div>
+
                     </div>
+
+                </div>
                 }
             }
             else
