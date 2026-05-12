@@ -19,6 +19,11 @@ builder.Services.AddSingleton<Db2ConnectionFactory>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<EvidenciaService>();
 
+// Softlink-code: servicios relacionados con la IA
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<MisionGenerationService>();
+builder.Services.AddHostedService<MisionDiariaHostedService>();
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
