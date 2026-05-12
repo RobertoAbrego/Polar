@@ -18,7 +18,10 @@ namespace Polar.Controllers
         // 🔥 INDEX CON FEED
         public IActionResult Index()
         {
-            ViewBag.Feed = _ev.GetFeed();
+            var email = HttpContext.Session.GetString("UserEmail") ?? "";
+
+            ViewBag.Feed = _ev.GetFeed(email);
+
             return View();
         }
 

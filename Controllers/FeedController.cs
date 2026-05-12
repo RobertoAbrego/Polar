@@ -14,14 +14,24 @@ namespace Polar.Controllers
 
         public IActionResult Index()
         {
+            var email = HttpContext.Session.GetString("UserEmail") ?? "";
+
+            var feed = _service.GetFeed(email);
+
+            return View(feed);
+        }
+
+        [HttpPost]
+        public IActionResult Eliminar(int id)
+        {
             var email = HttpContext.Session.GetString("UserEmail");
 
             if (email == null)
                 return RedirectToAction("Login", "Auth");
 
-            var data = _service.GetFeed();
+            _service.DeletePost(id, email);
 
-            return View(data);
+            return RedirectToAction("Index");
         }
     }
 }

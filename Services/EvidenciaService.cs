@@ -1,5 +1,5 @@
 using IBM.Data.Db2;
-
+using Polar.Models;
 namespace Polar.Services
 {
     public class EvidenciaService
@@ -78,7 +78,7 @@ namespace Polar.Services
                 var path = Path.Combine(_env.WebRootPath, "uploads", fileName);
 
                 Directory.CreateDirectory(Path.Combine(_env.WebRootPath, "uploads"));
-
+                Console.WriteLine(path);
                 using var stream = new FileStream(path, FileMode.Create);
                 imagen.CopyTo(stream);
 
@@ -128,21 +128,85 @@ namespace Polar.Services
             }
 
 
-        // 🔥 FEED (ESTO ES LO NUEVO)
-        public List<dynamic> GetFeed()
+        private List<ComentarioModel> GetComentarios(int evidenciaId)
         {
-            var list = new List<dynamic>();
+            var comentarios = new List<ComentarioModel>();
 
             using var conn = _factory.Create();
             conn.Open();
 
-            var sql = @"SELECT 
-                    U.NOMBRE,
-                    M.TITULO,
-                    M.TIPO,
-                    M.PUNTOS,
-                    EI.RUTAIMAGEN,
-                    E.FECHA
+            var sql = @"
+                SELECT
+                    C.ID,
+                    C.CONTENIDO,
+                    C.FECHA,
+                    U.NOMBRE
+                FROM DB2INST1.COMENTARIO C
+                JOIN DB2INST1.USUARIO U
+                    ON U.ID = C.USUARIOID
+                WHERE C.PUBLICACIONID = @id
+                ORDER BY C.FECHA ASC";
+
+            using var cmd = new DB2Command(sql, conn);
+
+            cmd.Parameters.Add(new DB2Parameter("@id", evidenciaId));
+
+            using var reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                comentarios.Add(new ComentarioModel
+                {
+                    Id = reader.GetInt32(0),
+                    Contenido = reader.GetString(1),
+                    Fecha = reader.GetDateTime(2),
+                    Nombre = reader.GetString(3)
+                });
+            }
+
+            return comentarios;
+        
+        }
+
+            public void DeletePost(int evidenciaId, string email)
+            {
+                using var conn = _factory.Create();
+                conn.Open();
+
+                var sql = @"
+                    DELETE FROM DB2INST1.EVIDENCIA
+                    WHERE ID = @id
+                    AND USUARIOID = (
+                        SELECT ID
+                        FROM DB2INST1.USUARIO
+                        WHERE EMAIL = @email
+                    )";
+
+                using var cmd = new DB2Command(sql, conn);
+
+                cmd.Parameters.Add(new DB2Parameter("@id", evidenciaId));
+                cmd.Parameters.Add(new DB2Parameter("@email", email));
+
+                cmd.ExecuteNonQuery();
+            }
+
+        // 🔥 FEED (ESTO ES LO NUEVO)
+        public List<FeedPost> GetFeed(string email)
+        {
+            var list = new List<FeedPost>();
+
+            using var conn = _factory.Create();
+            conn.Open();
+
+            var sql = @"SELECT
+                E.ID,
+                U.NOMBRE,
+                M.TITULO,
+                M.TIPO,
+                M.PUNTOS,
+                EI.RUTAIMAGEN,
+                E.FECHA,
+                U.EMAIL
                 FROM DB2INST1.EVIDENCIA E
                 JOIN DB2INST1.USUARIO U 
                     ON U.ID = E.USUARIOID
@@ -157,15 +221,21 @@ namespace Polar.Services
 
             while (reader.Read())
             {
-            list.Add(new
+            var post = new FeedPost
             {
-                Nombre = reader.GetString(0),
-                Titulo = reader.GetString(1),
-                Tipo = reader.GetString(2),
-                Puntos = reader.GetInt32(3),
-                Imagen = reader.GetString(4),
-                Fecha = reader.GetDateTime(5)
-            });
+                EvidenciaId = reader.GetInt32(0),
+                Nombre = reader.GetString(1),
+                Titulo = reader.GetString(2),
+                Tipo = reader.GetString(3),
+                Puntos = reader.GetInt32(4),
+                Imagen = reader.GetString(5),
+                Fecha = reader.GetDateTime(6),
+                EsMia = reader.GetString(7) == email
+            };
+
+            post.Comentarios = GetComentarios(post.EvidenciaId);
+
+            list.Add(post);
             }
 
             return list;

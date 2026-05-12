@@ -40,5 +40,8 @@
     environment:
       ASPNETCORE_ENVIRONMENT: Development
 
+    volumes:
+      - ./uploads:/app/wwwroot/uploads
+
 volumes:
   db2_data:

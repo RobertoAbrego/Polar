@@ -12,7 +12,7 @@
         <span class="badge-polar mb-3">Tu espacio</span>
 
         <h2 class="section-title">
-            Bienvenido 👋 @Context.Session.GetString("UserEmail").Split('@')[0]
+            Bienvenido 👋 @Context.Session.GetString("UserEmail")?.Split('@')[0]
         </h2>
 
         <p class="section-subtitle">
@@ -245,7 +245,7 @@
                                 <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center"
                                     style="width:42px;height:42px;font-weight:bold;">
 
-                                    @item.Nombre.Substring(0,1).ToUpper()
+                                   @(string.IsNullOrEmpty(item.Nombre) ? "U" : item.Nombre.Substring(0,1).ToUpper())
 
                                 </div>
 
@@ -283,9 +283,22 @@
                                 💬 Comentar
                             </button>
 
-                            <button class="btn btn-outline-danger btn-sm">
-                                🗑 Eliminar
-                            </button>
+                                                    @if(item.EsMia)
+                        {
+                            <form asp-controller="Feed"
+                                asp-action="Eliminar"
+                                method="post">
+
+                                <input type="hidden"
+                                    name="id"
+                                    value="@item.EvidenciaId" />
+
+                                <button class="btn btn-outline-danger btn-sm">
+                                    🗑 Eliminar
+                                </button>
+
+                            </form>
+                        }
 
                         </div>
 
