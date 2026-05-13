@@ -8,11 +8,13 @@ namespace Polar.Controllers
     public class HomeController : Controller
     {
         private readonly EvidenciaService _ev;
+        private readonly AuthService _auth;
 
         // 🔥 INYECCIÓN DEL SERVICE
         public HomeController(EvidenciaService ev)
         {
             _ev = ev;
+            _auth = auth;
         }
 
         // 🔥 INDEX CON FEED
@@ -21,6 +23,21 @@ namespace Polar.Controllers
             var email = HttpContext.Session.GetString("UserEmail") ?? "";
 
             ViewBag.Feed = _ev.GetFeed(email);
+
+            if (!string.IsNullOrWhiteSpace(email))
+            {
+                ViewBag.NombreUsuario = _auth.GetNombreByEmail(email) ?? email;
+                ViewBag.Puntos = _auth.GetPuntosByEmail(email);
+                ViewBag.Nivel = _auth.GetNivelByEmail(email);
+                ViewBag.Progreso = _auth.GetProgresoAlSiguienteNivel(email);
+            }
+            else
+            {
+                ViewBag.NombreUsuario = "";
+                ViewBag.Puntos = 0;
+                ViewBag.Nivel = 1;
+                ViewBag.Progreso = 0;
+            }
 
             return View();
         }
