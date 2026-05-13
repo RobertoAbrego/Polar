@@ -230,7 +230,7 @@
             {
                 foreach (var item in ViewBag.Feed)
                 {
-                <div class="card border-0 shadow-sm mb-4 overflow-hidden">
+                <div class="card border-0 shadow-sm mb-4 overflow-hidden feed-card">
 
                     <img src="@item.Imagen"
                         class="img-fluid"
@@ -272,6 +272,12 @@
                         <h5 class="fw-bold mb-1">
                             🌱 @item.Titulo
                         </h5>
+                        @if (!string.IsNullOrWhiteSpace(item.Descripcion))
+                        {
+                            <div class="feed-home-description">
+                                @item.Descripcion
+                            </div>
+                        }
 
                         <p class="text-muted mb-3">
                             @item.Tipo
@@ -279,9 +285,31 @@
 
                         <div class="d-flex gap-2">
 
-                            <button class="btn btn-outline-success btn-sm">
-                                💬 Comentar
-                            </button>
+                        <form asp-controller="Comentario"
+                            asp-action="Crear"
+                            method="post"
+                            class="mt-3">
+
+                            <input type="hidden"
+                                name="publicacionId"
+                                value="@item.EvidenciaId" />
+
+                            <div class="comment-box">
+
+                                <input type="text"
+                                    name="contenido"
+                                    class="form-control comment-input"
+                                    placeholder="Escribe un comentario..."
+                                    required />
+
+                                <button type="submit"
+                                        class="btn btn-success comment-btn">
+                                    💬 Comentar
+                                </button>
+
+                            </div>
+
+                        </form>
 
                                                     @if(item.EsMia)
                         {
@@ -315,3 +343,41 @@
         </div>
     </div>
 }
+
+<style>
+
+.feed-home-description{
+    background:#f0fdf4;
+    border-left:4px solid #22c55e;
+    padding:1rem;
+    border-radius:14px;
+    margin:.8rem 0 1rem;
+    color:#374151;
+    line-height:1.7;
+}
+
+.comment-box{
+    display:flex;
+    gap:.7rem;
+    margin-top:1rem;
+}
+
+.comment-input{
+    background:#f8fafc !important;
+    border:1px solid #d1d5db !important;
+    border-radius:14px !important;
+    color:#111827 !important;
+    padding:.8rem 1rem !important;
+}
+
+.comment-input::placeholder{
+    color:#6b7280;
+}
+
+.comment-btn{
+    border-radius:14px !important;
+    padding:0 1.2rem !important;
+    font-weight:600 !important;
+}
+
+</style>

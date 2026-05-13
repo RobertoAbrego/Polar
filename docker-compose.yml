@@ -39,6 +39,7 @@
 
     environment:
       ASPNETCORE_ENVIRONMENT: Development
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
 
     volumes:
       - ./uploads:/app/wwwroot/uploads

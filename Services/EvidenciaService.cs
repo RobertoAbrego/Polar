@@ -8,11 +8,17 @@ namespace Polar.Services
         private readonly Db2ConnectionFactory _factory;
         private readonly IWebHostEnvironment _env;
 
-        public EvidenciaService(Db2ConnectionFactory factory, IWebHostEnvironment env)
+        public EvidenciaService(
+            Db2ConnectionFactory factory,
+            IWebHostEnvironment env)
         {
             _factory = factory;
             _env = env;
         }
+
+        // =========================
+        // 🌱 MISIONES
+        // =========================
 
         public List<dynamic> GetMisiones()
         {
@@ -71,15 +77,26 @@ namespace Polar.Services
             // 2. obtener último ID generado
             var getId = "SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1";
             using var cmdId = new DB2Command(getId, conn);
-            var evidenciaId = Convert.ToInt32(cmdId.ExecuteScalar());
 
             // 3. guardar imagen en disco
             string? ruta = null;
 
             if (imagen != null && imagen.Length > 0)
             {
-                var fileName = Guid.NewGuid() + Path.GetExtension(imagen.FileName);
-                var path = Path.Combine(_env.WebRootPath, "uploads", fileName);
+                var fileName =
+                    Guid.NewGuid() +
+                    Path.GetExtension(imagen.FileName);
+
+                var uploads =
+                    Path.Combine(_env.WebRootPath, "uploads");
+
+                Directory.CreateDirectory(uploads);
+
+                var path =
+                    Path.Combine(uploads, fileName);
+
+                using var stream =
+                    new FileStream(path, FileMode.Create);
 
                 Directory.CreateDirectory(Path.Combine(_env.WebRootPath, "uploads"));
 
@@ -194,9 +211,21 @@ namespace Polar.Services
             cmd.ExecuteNonQuery();
         }
 
-        private List<ComentarioModel> GetComentarios(int evidenciaId)
+            cmd.Parameters.Add(
+                new DB2Parameter("@c", contenido));
+
+            cmd.ExecuteNonQuery();
+        }
+
+        // =========================
+        // 📖 OBTENER COMENTARIOS
+        // =========================
+
+        private List<ComentarioModel> GetComentarios(
+            int evidenciaId)
         {
-            var comentarios = new List<ComentarioModel>();
+            var comentarios =
+                new List<ComentarioModel>();
 
             using var conn = _factory.Create();
             conn.Open();
@@ -223,8 +252,13 @@ namespace Polar.Services
                 comentarios.Add(new ComentarioModel
                 {
                     Id = reader.GetInt32(0),
+
                     Contenido = reader.GetString(1),
-                    Fecha = reader.GetDateTime(2),
+
+                    Fecha = reader.IsDBNull(2)
+                        ? DateTime.Now
+                        : reader.GetDateTime(2),
+
                     Nombre = reader.GetString(3)
                 });
             }
@@ -282,10 +316,14 @@ namespace Polar.Services
                     ON M.ID = E.MISIONID
                 JOIN DB2INST1.EVIDENCIAIMAGEN EI
                     ON EI.EVIDENCIAID = E.ID
+
                 ORDER BY E.FECHA DESC";
 
-            using var cmd = new DB2Command(sql, conn);
-            using var reader = cmd.ExecuteReader();
+            using var cmd =
+                new DB2Command(sql, conn);
+
+            using var reader =
+                cmd.ExecuteReader();
 
             while (reader.Read())
             {

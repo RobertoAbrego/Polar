@@ -14,6 +14,8 @@ namespace Polar.Models
 
         public string Imagen { get; set; } = "";
 
+        public string Descripcion { get; set; } = "";
+
         public DateTime Fecha { get; set; }
 
         public bool EsMia { get; set; }

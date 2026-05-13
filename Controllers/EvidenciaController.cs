@@ -33,7 +33,10 @@ namespace Polar.Controllers
         // 📸 SUBMIT
         // =========================
         [HttpPost]
-        public IActionResult Crear(int misionId, IFormFile imagen)
+        public IActionResult Crear(
+            int misionId,
+            IFormFile imagen,
+            string descripcion)
         {
             var email = HttpContext.Session.GetString("UserEmail");
 
@@ -46,7 +49,7 @@ namespace Polar.Controllers
                 return View();
             }
 
-            _service.Create(email, misionId, imagen);
+            _service.Create(email, misionId, imagen, descripcion);
 
             return RedirectToAction("Index", "Feed");
         }

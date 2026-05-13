@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Polar.Models;
 using Polar.Services;
+using System.Net;
+using System.Net.Mail;
 
 namespace Polar.Controllers
 {
@@ -11,6 +13,33 @@ namespace Polar.Controllers
         public AuthController(AuthService authService)
         {
             _authService = authService;
+        }
+
+        // 🔥 GENERAR CÓDIGO
+        private string GenerateCode()
+        {
+            return new Random().Next(100000, 999999).ToString();
+        }
+
+        private void SendEmail(string toEmail, string code)
+        {
+            var fromEmail = "max502991@gmail.com";
+            var password = "mvegarmwrfyfguuc";
+
+            var client = new SmtpClient("smtp.gmail.com", 587)
+            {
+             Credentials = new NetworkCredential(fromEmail, password),
+             EnableSsl = true,
+             DeliveryMethod = SmtpDeliveryMethod.Network,
+             UseDefaultCredentials = false
+            };
+            var mail = new MailMessage(fromEmail, toEmail)
+            {
+                Subject = "Código de verificación",
+                Body = $"Tu código de verificación es: {code}"
+            };
+
+            client.Send(mail);
         }
 
         // 🔹 GET LOGIN
@@ -68,20 +97,73 @@ namespace Polar.Controllers
                 ViewBag.Message = "⚠️ Debes completar todos los campos";
                 return View();
             }
-
+            // 🔥 validar si correo ya existe
+            if (_authService.EmailExists(model.Email))
+            {
+                ViewBag.Message = "❌ Ya existe una cuenta con este correo";
+                return View();
+            }
             try
             {
-                // 🔥 AQUÍ SÍ VA REGISTER
-                _authService.Register(model.Nombre, model.Email, model.Password);
+                // 🔥 generar código
+                string code = GenerateCode();
 
-                TempData["Success"] = "✅ Usuario registrado correctamente";
-                return RedirectToAction("Login");
+                // 🔥 guardar temporalmente datos del usuario
+                HttpContext.Session.SetString("VerificationCode", code);
+                HttpContext.Session.SetString("TempNombre", model.Nombre);
+                HttpContext.Session.SetString("VerificationEmail", model.Email);
+                HttpContext.Session.SetString("TempPassword", model.Password);
+                
+                // 🔥 enviar correo
+                SendEmail(model.Email, code);
+
+                // 🔥 ir a verificar código
+                return RedirectToAction("VerifyCode");
             }
             catch (Exception ex)
             {
-                ViewBag.Message = $"❌ Error al registrar: {ex.Message}";
+                ViewBag.Message = ex.ToString();
                 return View();
             }
+        }
+
+        // 🔹 GET VERIFY CODE
+        public IActionResult VerifyCode()
+        {
+            return View();
+        }
+
+        // 🔹 POST VERIFY CODE
+        [HttpPost]
+        public IActionResult VerifyCode(string code)
+        {
+            var savedCode = HttpContext.Session.GetString("VerificationCode");
+
+            if (code == savedCode)
+            {
+                // 🔥 obtener datos guardados temporalmente
+                var nombre = HttpContext.Session.GetString("TempNombre");
+                var email = HttpContext.Session.GetString("VerificationEmail");
+                var password = HttpContext.Session.GetString("TempPassword");
+
+                // 🔥 validar otra vez por seguridad
+                if (_authService.EmailExists(email))
+                {
+                    ViewBag.Message = "❌ El correo ya fue registrado";
+                    return View();
+                }
+
+                // 🔥 crear cuenta
+                _authService.Register(nombre, email, password);
+
+                TempData["Success"] = "✅ Cuenta creada correctamente";
+
+                return RedirectToAction("Login");
+            }
+
+            ViewBag.Message = "❌ Código incorrecto";
+
+            return View();
         }
 
         // 🔹 LOGOUT

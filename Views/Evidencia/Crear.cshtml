@@ -1,52 +1,143 @@
 @model dynamic
 
-<h2 class="mb-4">Misiones ecológicas</h2>
-
-<div class="row">
-
-@foreach (var m in Model)
-{
-    <div class="col-md-4 mb-4">
-
-        <div class="card shadow-sm h-100">
-
-            <div class="card-body">
-
-                <h4>@m.Titulo</h4>
-
-                <p>@m.Descripcion</p>
-
-                <span class="badge bg-success">
-                    @m.Tipo
-                </span>
-
-                <p class="mt-2 fw-bold">
-                    +@m.Puntos puntos
-                </p>
-
-                <form method="post"
-                      enctype="multipart/form-data">
-
-                    <input type="hidden"
-                           name="misionId"
-                           value="@m.Id" />
-
-                    <input type="file"
-                           name="imagen"
-                           class="form-control mb-3"
-                           required />
-
-                    <button class="btn btn-success w-100">
-                        Subir evidencia
-                    </button>
-
-                </form>
-
-            </div>
-
-        </div>
-
-    </div>
+@{
+    ViewData["Title"] = "Subir evidencia";
 }
 
+<div class="container py-4">
+
+    <div class="mb-5 text-center">
+
+        <span class="badge bg-success px-3 py-2 mb-3">
+            🌱 Comunidad Polar
+        </span>
+
+        <h1 class="fw-bold">
+            Comparte tu acción ecológica
+        </h1>
+
+        <p class="text-muted fs-5">
+            Completa una misión y muestra cómo estás ayudando al planeta.
+        </p>
+
+    </div>
+
+    <div class="row">
+
+        @foreach (var m in Model)
+        {
+            <div class="col-lg-4 col-md-6 mb-4">
+
+                <div class="card border-0 shadow-lg h-100 rounded-4 overflow-hidden mission-card">
+
+                    <div class="card-body p-4 d-flex flex-column">
+
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+
+                            <span class="badge bg-success">
+                                @m.Tipo
+                            </span>
+
+                            <span class="badge bg-dark">
+                                +@m.Puntos pts
+                            </span>
+
+                        </div>
+
+                        <h3 class="fw-bold mb-3">
+                            @m.Titulo
+                        </h3>
+
+                        <p class="text-muted flex-grow-1">
+                            @m.Descripcion
+                        </p>
+
+                        <form method="post"
+                              enctype="multipart/form-data"
+                              class="mt-4">
+
+                            <input type="hidden"
+                                   name="misionId"
+                                   value="@m.Id" />
+
+                            <!-- IMAGEN -->
+
+                            <div class="mb-3">
+
+                                <label class="form-label fw-semibold">
+                                    📸 Imagen de evidencia
+                                </label>
+
+                                <input type="file"
+                                       name="imagen"
+                                       class="form-control"
+                                       required />
+
+                            </div>
+
+                            <!-- DESCRIPCIÓN -->
+
+                            <div class="mb-3">
+
+                                <label class="form-label fw-semibold">
+                                    📝 Describe tu experiencia
+                                </label>
+
+                                <textarea name="descripcion"
+                                          class="form-control"
+                                          rows="4"
+                                          maxlength="1000"
+                                          placeholder="¿Qué hiciste? ¿Cómo ayudó al medio ambiente? ¿Cómo fue la experiencia?"></textarea>
+
+                                <small class="text-muted">
+                                    Máximo 1000 caracteres.
+                                </small>
+
+                            </div>
+
+                            <button class="btn btn-success w-100 rounded-pill py-2 fw-semibold">
+                                🌍 Publicar evidencia
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
 </div>
+
+<style>
+
+.mission-card{
+    transition: all .25s ease;
+}
+
+.mission-card:hover{
+    transform: translateY(-6px);
+}
+
+textarea.form-control{
+    resize: none;
+    border-radius: 14px;
+}
+
+.form-control{
+    border-radius: 12px;
+    padding: 10px;
+}
+
+.card{
+    background: #ffffff;
+}
+
+body{
+    background: #f4f7f4;
+}
+
+</style>

@@ -63,7 +63,7 @@ document.getElementById("loginForm").addEventListener("submit", function(e) {
     passwordError.classList.add("d-none");
 
     // Validación email
-    if (!email.value.includes("@@")) {
+    if (!email.checkValidity()) {
         emailError.classList.remove("d-none");
         valid = false;
     }

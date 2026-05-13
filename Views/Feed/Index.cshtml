@@ -1,133 +1,301 @@
 @model List<Polar.Models.FeedPost>
 
+@{
+    ViewData["Title"] = "Feed";
+}
 
-<h2 class="mb-4">🌍 Feed de evidencias</h2>
+<div class="feed-container">
 
-@foreach (var item in Model)
-{
-    <div class="card mb-4 shadow-sm border-0">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
 
-        <!-- HEADER -->
-        <div class="card-body">
+        <div>
+            <span class="badge-polar mb-2 d-inline-block">
+                Comunidad
+            </span>
 
-            <div class="d-flex justify-content-between align-items-center">
+            <h1 class="feed-title mb-1">
+                🌍 Feed ecológico
+            </h1>
 
-                <div>
-                    <h5 class="mb-0 fw-bold">
-                        @item.Nombre
-                    </h5>
+            <p class="feed-subtitle mb-0">
+                Descubre acciones reales realizadas por la comunidad Polar.
+            </p>
+        </div>
 
-                    <small class="text-muted">
-                        @item.Fecha
-                    </small>
+        <a asp-controller="Evidencia"
+           asp-action="Crear"
+           class="btn btn-success btn-lg rounded-pill px-4 shadow-sm">
+
+            📸 Compartir evidencia
+
+        </a>
+
+    </div>
+
+    @foreach (var item in Model)
+    {
+        <div class="feed-card">
+
+            <!-- HEADER -->
+            <div class="feed-header">
+
+                <div class="d-flex align-items-center gap-3">
+
+                    <div class="feed-avatar">
+
+                        @(string.IsNullOrEmpty(item.Nombre)
+                            ? "U"
+                            : item.Nombre.Substring(0,1).ToUpper())
+
+                    </div>
+
+                    <div>
+
+                        <div class="fw-bold fs-5">
+                            @item.Nombre
+                        </div>
+
+                        <small class="text-muted">
+                            @item.Fecha
+                        </small>
+
+                    </div>
+
                 </div>
 
-                @if (item.EsMia)
-                {
-                    <form asp-controller="Feed"
-                          asp-action="Eliminar"
-                          method="post">
+                <div class="d-flex gap-2 align-items-center">
 
-                        <input type="hidden"
-                               name="id"
-                               value="@item.EvidenciaId" />
+                    <span class="badge bg-success px-3 py-2">
+                        +@item.Puntos pts
+                    </span>
 
-                        <button class="btn btn-sm btn-danger">
-                            Eliminar
-                        </button>
+                    @if (item.EsMia)
+                    {
+                        <form asp-controller="Feed"
+                              asp-action="Eliminar"
+                              method="post">
 
-                    </form>
-                }
+                            <input type="hidden"
+                                   name="id"
+                                   value="@item.EvidenciaId" />
+
+                            <button class="btn btn-outline-danger btn-sm rounded-pill px-3">
+                                🗑 Eliminar
+                            </button>
+
+                        </form>
+                    }
+
+                </div>
 
             </div>
 
             <!-- INFO -->
-            <div class="mt-3">
+            <div class="feed-body">
 
-                <h4 class="fw-bold">
-                    @item.Titulo
-                </h4>
+                <div class="mb-3">
 
-                <span class="badge bg-success">
-                    @item.Tipo
-                </span>
+                    <span class="badge bg-dark px-3 py-2 mb-3">
+                        @item.Tipo
+                    </span>
 
-                <span class="badge bg-dark">
-                    +@item.Puntos puntos
-                </span>
+                    <h3 class="fw-bold mb-3">
+                        🌱 @item.Titulo
+                    </h3>
 
-            </div>
-
-            <!-- IMAGEN -->
-            <div class="mt-3">
-
-                <img src="@item.Imagen"
-                     class="img-fluid rounded shadow-sm w-100"
-                     style="max-height:500px; object-fit:cover;" />
-
-            </div>
-
-            <!-- COMENTARIOS -->
-            <div class="mt-4">
-
-                <h6 class="fw-bold mb-3">
-                    Comentarios
-                </h6>
-
-                @if (item.Comentarios != null && item.Comentarios.Count > 0)
-                {
-                    @foreach (var c in item.Comentarios)
+                    @if (!string.IsNullOrWhiteSpace(item.Descripcion))
                     {
-                        <div class="border rounded p-2 mb-2 bg-light">
+                        <div class="feed-description">
 
-                            <strong>@c.Nombre</strong>
-
-                            <small class="text-muted ms-2">
-                                @c.Fecha
-                            </small>
-
-                            <p class="mb-0 mt-1">
-                                @c.Contenido
-                            </p>
+                            @item.Descripcion
 
                         </div>
                     }
-                }
-                else
-                {
-                    <p class="text-muted">
-                        No hay comentarios aún.
-                    </p>
-                }
-
-            </div>
-
-            <!-- AGREGAR COMENTARIO -->
-            <form asp-controller="Comentario"
-                  asp-action="Crear"
-                  method="post"
-                  class="mt-3">
-
-                <input type="hidden"
-                       name="publicacionId"
-                       value="@item.EvidenciaId" />
-
-                <div class="input-group">
-
-                    <input type="text"
-                           name="contenido"
-                           class="form-control"
-                           placeholder="Escribe un comentario..."
-                           required />
-
-                    <button class="btn btn-success">
-                        Comentar
-                    </button>
 
                 </div>
 
-            </form>
+                <!-- IMAGEN -->
+                <div class="feed-image-wrapper">
+
+                    <img src="@item.Imagen"
+                         class="feed-image" />
+
+                </div>
+
+                <!-- COMENTARIOS -->
+                <div class="mt-4">
+
+                    <h5 class="fw-bold mb-3">
+                        💬 Comentarios
+                    </h5>
+
+                    @if (item.Comentarios != null && item.Comentarios.Count > 0)
+                    {
+                        @foreach (var c in item.Comentarios)
+                        {
+                            <div class="comment-box">
+
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+
+                                    <strong>
+                                        @c.Nombre
+                                    </strong>
+
+                                    <small class="text-muted">
+                                        @c.Fecha
+                                    </small>
+
+                                </div>
+
+                                <p class="mb-0">
+                                    @c.Contenido
+                                </p>
+
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="empty-comments">
+                            Aún no hay comentarios.
+                        </div>
+                    }
+
+                </div>
+
+                <!-- FORM -->
+                <form asp-controller="Comentario"
+                      asp-action="Crear"
+                      method="post"
+                      class="mt-4">
+
+                    <input type="hidden"
+                           name="publicacionId"
+                           value="@item.EvidenciaId" />
+
+                    <div class="input-group">
+
+                        <input type="text"
+                               name="contenido"
+                               class="form-control comment-input"
+                               placeholder="Escribe un comentario..."
+                               required />
+
+                        <button class="btn btn-success px-4">
+                            Comentar
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
 
         </div>
-    </div>
+    }
+
+</div>
+
+<style>
+
+.feed-container{
+    max-width:900px;
+    margin:auto;
 }
+
+.feed-title{
+    font-size:2.2rem;
+    font-weight:800;
+    color:#163020;
+}
+
+.feed-subtitle{
+    color:#6b7280;
+    font-size:1.02rem;
+}
+
+.feed-card{
+    background:white;
+    border-radius:28px;
+    overflow:hidden;
+    margin-bottom:2rem;
+    box-shadow:0 10px 35px rgba(0,0,0,.08);
+    border:1px solid rgba(0,0,0,.04);
+}
+
+.feed-header{
+    padding:1.5rem 1.5rem 0;
+    display:flex;
+    justify-content:space-between;
+    gap:1rem;
+    flex-wrap:wrap;
+}
+
+.feed-body{
+    padding:1.5rem;
+}
+
+.feed-avatar{
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#16a34a,#22c55e);
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:800;
+    font-size:1.2rem;
+    box-shadow:0 5px 15px rgba(34,197,94,.35);
+}
+
+.feed-description{
+    background:#f0fdf4;
+    border-left:5px solid #22c55e;
+    padding:1rem;
+    border-radius:14px;
+    color:#374151;
+    line-height:1.7;
+}
+
+.feed-image-wrapper{
+    overflow:hidden;
+    border-radius:22px;
+}
+
+.feed-image{
+    width:100%;
+    max-height:550px;
+    object-fit:cover;
+    transition:.4s ease;
+}
+
+.feed-image:hover{
+    transform:scale(1.02);
+}
+
+.comment-box{
+    background:#f9fafb;
+    border-radius:16px;
+    padding:1rem;
+    margin-bottom:1rem;
+    border:1px solid #ececec;
+}
+
+.empty-comments{
+    padding:1rem;
+    border-radius:14px;
+    background:#f3f4f6;
+    color:#6b7280;
+}
+
+.comment-input{
+    border-radius:14px 0 0 14px !important;
+    padding:.9rem 1rem;
+}
+
+.input-group .btn{
+    border-radius:0 14px 14px 0 !important;
+}
+
+</style>
