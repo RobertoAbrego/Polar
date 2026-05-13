@@ -49,7 +49,7 @@ namespace Polar.Controllers
                 return View();
             }
 
-            _service.Create(email, misionId, imagen, descripcion);
+            _service.Create(email, misionId, descripcion, imagen);
 
             return RedirectToAction("Index", "Feed");
         }

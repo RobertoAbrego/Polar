@@ -10,8 +10,10 @@ namespace Polar.Controllers
         private readonly EvidenciaService _ev;
         private readonly AuthService _auth;
 
-        // 🔥 INYECCIÓN DEL SERVICE
-        public HomeController(EvidenciaService ev)
+        // 🔥 INYECCIÓN DE SERVICES
+        public HomeController(
+            EvidenciaService ev,
+            AuthService auth)
         {
             _ev = ev;
             _auth = auth;
@@ -20,16 +22,25 @@ namespace Polar.Controllers
         // 🔥 INDEX CON FEED
         public IActionResult Index()
         {
-            var email = HttpContext.Session.GetString("UserEmail") ?? "";
+            var email =
+                HttpContext.Session.GetString("UserEmail") ?? "";
 
-            ViewBag.Feed = _ev.GetFeed(email);
+            ViewBag.Feed =
+                _ev.GetFeed(email);
 
             if (!string.IsNullOrWhiteSpace(email))
             {
-                ViewBag.NombreUsuario = _auth.GetNombreByEmail(email) ?? email;
-                ViewBag.Puntos = _auth.GetPuntosByEmail(email);
-                ViewBag.Nivel = _auth.GetNivelByEmail(email);
-                ViewBag.Progreso = _auth.GetProgresoAlSiguienteNivel(email);
+                ViewBag.NombreUsuario =
+                    _auth.GetNombreByEmail(email) ?? email;
+
+                ViewBag.Puntos =
+                    _auth.GetPuntosByEmail(email);
+
+                ViewBag.Nivel =
+                    _auth.GetNivelByEmail(email);
+
+                ViewBag.Progreso =
+                    _auth.GetProgresoAlSiguienteNivel(email);
             }
             else
             {
@@ -47,12 +58,17 @@ namespace Polar.Controllers
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [ResponseCache(
+            Duration = 0,
+            Location = ResponseCacheLocation.None,
+            NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel
             {
-                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+                RequestId =
+                    Activity.Current?.Id
+                    ?? HttpContext.TraceIdentifier
             });
         }
     }
