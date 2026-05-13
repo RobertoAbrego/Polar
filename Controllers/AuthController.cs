@@ -97,7 +97,12 @@ namespace Polar.Controllers
                 ViewBag.Message = "⚠️ Debes completar todos los campos";
                 return View();
             }
-
+            // 🔥 validar si correo ya existe
+            if (_authService.EmailExists(model.Email))
+            {
+                ViewBag.Message = "❌ Ya existe una cuenta con este correo";
+                return View();
+            }
             try
             {
                 // 🔥 generar código
@@ -140,6 +145,13 @@ namespace Polar.Controllers
                 var nombre = HttpContext.Session.GetString("TempNombre");
                 var email = HttpContext.Session.GetString("VerificationEmail");
                 var password = HttpContext.Session.GetString("TempPassword");
+
+                // 🔥 validar otra vez por seguridad
+                if (_authService.EmailExists(email))
+                {
+                    ViewBag.Message = "❌ El correo ya fue registrado";
+                    return View();
+                }
 
                 // 🔥 crear cuenta
                 _authService.Register(nombre, email, password);

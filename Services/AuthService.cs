@@ -76,6 +76,25 @@ namespace Polar.Services
             return result?.ToString();
         }
 
+        public bool EmailExists(string email)
+        {
+            using var conn = _factory.Create();
+            conn.Open();
+
+            var sql = @"
+                SELECT COUNT(*)
+                FROM DB2INST1.USUARIO
+                WHERE EMAIL = @email";
+
+            using var cmd = new DB2Command(sql, conn);
+
+            cmd.Parameters.Add(new DB2Parameter("@email", email));
+
+            var count = Convert.ToInt32(cmd.ExecuteScalar());
+
+            return count > 0;
+        }
+
         private string GetKey()
         {
             var path = Path.Combine(
