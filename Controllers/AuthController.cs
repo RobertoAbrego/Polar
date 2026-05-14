@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Polar.Models;
 using Polar.Services;
-using System.Net;
-using System.Net.Mail;
+
 
 namespace Polar.Controllers
 {
@@ -19,27 +18,6 @@ namespace Polar.Controllers
         private string GenerateCode()
         {
             return new Random().Next(100000, 999999).ToString();
-        }
-
-        private void SendEmail(string toEmail, string code)
-        {
-            var fromEmail = "polar.app.sv@gmail.com";
-            var password = "jrddhtfapcsodstn";
-
-            var client = new SmtpClient("smtp.gmail.com", 587)
-            {
-             Credentials = new NetworkCredential(fromEmail, password),
-             EnableSsl = true,
-             DeliveryMethod = SmtpDeliveryMethod.Network,
-             UseDefaultCredentials = false
-            };
-            var mail = new MailMessage(fromEmail, toEmail)
-            {
-                Subject = "Código de verificación",
-                Body = $"Tu código de verificación es: {code}"
-            };
-
-            client.Send(mail);
         }
 
         // 🔹 GET LOGIN
@@ -115,8 +93,9 @@ namespace Polar.Controllers
                 HttpContext.Session.SetString("TempPassword", model.Password);
                 
                 // 🔥 enviar correo
-                SendEmail(model.Email, code);
-
+               _authService.SendVerificationEmail(
+                model.Email,
+                code);
                 // 🔥 ir a verificar código
                 return RedirectToAction("VerifyCode");
             }
