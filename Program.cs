@@ -18,6 +18,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<Db2ConnectionFactory>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<EvidenciaService>();
+builder.Services.AddScoped<MissionService>();
 
 // Softlink-code: servicios relacionados con la IA
 builder.Services.AddHttpClient();

@@ -4,176 +4,227 @@
 @{
     var userEmail = Context.Session.GetString("UserEmail");
     var userName = Context.Session.GetString("UserName") ?? "Usuario";
-    var initial = userName.Substring(0, 1).ToUpper();
+    var userPhoto = Context.Session.GetString("UserPhoto");
+
+    var initial = userName.Substring(0,1).ToUpper();
 }
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>@ViewData["Title"] - Polar</title>
 
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Polar.styles.css" asp-append-version="true" />
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
 </head>
 
 <body class="d-flex flex-column min-vh-100">
 
 <header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm py-3">
-        <div class="container">
 
-            <!-- LOGO -->
-            <a class="navbar-brand fw-bold d-flex align-items-center gap-2"
-               asp-controller="Home"
-               asp-action="Index">
-                <img src="~/images/Logo.jpeg"
-                     width="32"
-                     height="32"
-                     class="rounded-circle" />
-                Polar
-            </a>
+<nav class="navbar navbar-expand-lg navbar-dark navbar-polar">
 
-            <!-- BOTÓN MOBILE -->
-            <button class="navbar-toggler"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#polarNavbar">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+<div class="container">
 
-            <div class="collapse navbar-collapse" id="polarNavbar">
+    <a class="navbar-brand brand-polar d-flex align-items-center gap-2"
+       asp-controller="Home"
+       asp-action="Index">
 
-                <!-- IZQUIERDA -->
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Home" asp-action="Index">
-                            Inicio
-                        </a>
-                    </li>
+       <img src="~/img/logo.png" height="40" />
 
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Home" asp-action="Privacy">
-                            Privacidad
-                        </a>
-                    </li>
+    </a>
 
-                    @if (userEmail != null)
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Feed" asp-action="Index">
-                                Feed
+    <button class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbar">
+
+        <span class="navbar-toggler-icon"></span>
+
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbar">
+
+        <ul class="navbar-nav me-auto">
+
+            <li class="nav-item">
+                <a class="nav-link nav-polar-link"
+                   asp-controller="Home"
+                   asp-action="Index">
+
+                    Inicio
+
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link nav-polar-link"
+                   asp-controller="Home"
+                   asp-action="Privacy">
+
+                    Privacidad
+
+                </a>
+            </li>
+
+            @if(userEmail != null)
+            {
+                <li class="nav-item">
+                    <a class="nav-link nav-polar-link"
+                       asp-controller="Feed"
+                       asp-action="Index">
+
+                        Feed
+
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link nav-polar-link"
+                       asp-controller="Evidencia"
+                       asp-action="Crear">
+
+                        Subir evidencia
+
+                    </a>
+                </li>
+            }
+
+        </ul>
+
+        <ul class="navbar-nav">
+
+            @if(userEmail == null)
+            {
+                <li class="nav-item me-2">
+                    <a class="btn btn-outline-light"
+                       asp-controller="Auth"
+                       asp-action="Login">
+
+                        Iniciar sesión
+
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="btn btn-success"
+                       asp-controller="Auth"
+                       asp-action="Register">
+
+                        Crear cuenta
+
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="nav-item dropdown">
+
+                    <a class="nav-link dropdown-toggle d-flex align-items-center gap-2"
+                       href="#"
+                       data-bs-toggle="dropdown">
+
+                        @if(!string.IsNullOrWhiteSpace(userPhoto))
+                        {
+                            <img src="@userPhoto"
+                                 class="user-avatar" />
+                        }
+                        else
+                        {
+                            <div class="user-fallback">
+                                @initial
+                            </div>
+                        }
+
+                        <span class="text-white">
+                            @userName
+                        </span>
+
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+
+                        <li>
+                            <span class="dropdown-item-text fw-bold">
+                                @userName
+                            </span>
+                        </li>
+
+                        <li><hr class="dropdown-divider" /></li>
+
+                        <li>
+                            <a class="dropdown-item"
+                               asp-controller="Profile"
+                               asp-action="Settings">
+
+                                Configuración
+
                             </a>
                         </li>
-                    }
-                </ul>
 
-                <!-- DERECHA -->
-                <ul class="navbar-nav align-items-center">
-
-                    @if (userEmail == null)
-                    {
-                        <li class="nav-item me-2">
-                            <a class="btn btn-outline-light"
+                        <li>
+                            <a class="dropdown-item text-danger"
                                asp-controller="Auth"
-                               asp-action="Login">
-                                Iniciar sesión
+                               asp-action="Logout">
+
+                                Cerrar sesión
+
                             </a>
                         </li>
 
-                        <li class="nav-item">
-                            <a class="btn btn-success"
-                               asp-controller="Auth"
-                               asp-action="Register">
-                                Crear cuenta
-                            </a>
-                        </li>
-                    }
-                    else
-                    {
-                        <!-- DROPDOWN PERFIL -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2"
-                               href="#"
-                               role="button"
-                               data-bs-toggle="dropdown">
+                    </ul>
 
-                                <span class="rounded-circle bg-light text-dark px-2">
-                                    @initial
-                                </span>
+                </li>
+            }
 
-                                <span>@userName</span>
-                            </a>
+        </ul>
 
-                            <ul class="dropdown-menu dropdown-menu-end">
+    </div>
 
-                                <li>
-                                    <span class="dropdown-item-text fw-bold">
-                                        @userName
-                                    </span>
-                                </li>
+</div>
 
-                                <li><hr class="dropdown-divider"></li>
+</nav>
 
-                            <li>
-                                <a class="dropdown-item"
-                                asp-controller="Profile"
-                                asp-action="Settings">
-                                    Configuración
-                                </a>
-                            </li>
-
-                                <li>
-                                    <a class="dropdown-item text-danger"
-                                       asp-controller="Auth"
-                                       asp-action="Logout">
-                                        Cerrar sesión
-                                    </a>
-                                </li>
-
-                            </ul>
-                        </li>
-                    }
-
-                </ul>
-
-            </div>
-        </div>
-    </nav>
 </header>
 
-<!-- CONTENIDO -->
-<main class="container my-4 flex-grow-1">
-
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show">
-            @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
+<main class="container py-4 flex-grow-1">
 
     @RenderBody()
 
 </main>
 
-<!-- FOOTER -->
-<footer class="bg-dark text-light mt-auto py-4">
+<footer class="footer-polar py-4 mt-auto">
+
     <div class="container text-center">
-        <p class="mb-1 fw-bold">Polar</p>
-        <small>Plataforma ecológica para generar conciencia ambiental 🌱</small>
-        <br />
-        <small>© 2026 Polar</small>
+
+        <div class="fw-bold mb-1">
+            Polar
+        </div>
+
+        <div class="text-polar-muted">
+            Plataforma ecológica enfocada en hábitos sostenibles 🌎
+        </div>
+
+        <small class="text-polar-muted">
+            © 2026 Polar
+        </small>
+
     </div>
+
 </footer>
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="~/js/site.js"></script>
 
-@await RenderSectionAsync("Scripts", required: false)
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

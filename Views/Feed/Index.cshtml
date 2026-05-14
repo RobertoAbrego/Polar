@@ -32,22 +32,30 @@
 
     </div>
 
-    @foreach (var item in Model)
-    {
-        <div class="feed-card">
+                        @foreach (var item in Model)
+                        {
+                            <div class="feed-card">
 
-            <!-- HEADER -->
-            <div class="feed-header">
+                                <!-- HEADER -->
+                                <div class="feed-header">
 
-                <div class="d-flex align-items-center gap-3">
+                                    <div class="d-flex align-items-center gap-3">
 
-                    <div class="feed-avatar">
+                                        @if(!string.IsNullOrWhiteSpace(item.FotoPerfil))
+                    {
+                        <img src="@item.FotoPerfil"
+                            class="user-avatar" />
+                    }
+                    else
+                    {
+                        <div class="user-fallback">
 
-                        @(string.IsNullOrEmpty(item.Nombre)
-                            ? "U"
-                            : item.Nombre.Substring(0,1).ToUpper())
+                            @(string.IsNullOrEmpty(item.Nombre)
+                                ? "U"
+                                : item.Nombre.Substring(0,1).ToUpper())
 
-                    </div>
+                        </div>
+                    }
 
                     <div>
 
@@ -195,107 +203,3 @@
     }
 
 </div>
-
-<style>
-
-.feed-container{
-    max-width:900px;
-    margin:auto;
-}
-
-.feed-title{
-    font-size:2.2rem;
-    font-weight:800;
-    color:#163020;
-}
-
-.feed-subtitle{
-    color:#6b7280;
-    font-size:1.02rem;
-}
-
-.feed-card{
-    background:white;
-    border-radius:28px;
-    overflow:hidden;
-    margin-bottom:2rem;
-    box-shadow:0 10px 35px rgba(0,0,0,.08);
-    border:1px solid rgba(0,0,0,.04);
-}
-
-.feed-header{
-    padding:1.5rem 1.5rem 0;
-    display:flex;
-    justify-content:space-between;
-    gap:1rem;
-    flex-wrap:wrap;
-}
-
-.feed-body{
-    padding:1.5rem;
-}
-
-.feed-avatar{
-    width:55px;
-    height:55px;
-    border-radius:50%;
-    background:linear-gradient(135deg,#16a34a,#22c55e);
-    color:white;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:800;
-    font-size:1.2rem;
-    box-shadow:0 5px 15px rgba(34,197,94,.35);
-}
-
-.feed-description{
-    background:#f0fdf4;
-    border-left:5px solid #22c55e;
-    padding:1rem;
-    border-radius:14px;
-    color:#374151;
-    line-height:1.7;
-}
-
-.feed-image-wrapper{
-    overflow:hidden;
-    border-radius:22px;
-}
-
-.feed-image{
-    width:100%;
-    max-height:550px;
-    object-fit:cover;
-    transition:.4s ease;
-}
-
-.feed-image:hover{
-    transform:scale(1.02);
-}
-
-.comment-box{
-    background:#f9fafb;
-    border-radius:16px;
-    padding:1rem;
-    margin-bottom:1rem;
-    border:1px solid #ececec;
-}
-
-.empty-comments{
-    padding:1rem;
-    border-radius:14px;
-    background:#f3f4f6;
-    color:#6b7280;
-}
-
-.comment-input{
-    border-radius:14px 0 0 14px !important;
-    padding:.9rem 1rem;
-}
-
-.input-group .btn{
-    border-radius:0 14px 14px 0 !important;
-}
-
-</style>

@@ -139,23 +139,24 @@
             </p>
 
             <ul class="list-clean mt-4">
+
+            @foreach(var reto in (ViewBag.Retos ?? new List<object>()))
+            {
                 <li>
-                    <span class="check-icon">✓</span>
-                    <span>Separar residuos orgánicos e inorgánicos durante el día.</span>
+
+                    <span class="check-icon">
+                        ✓
+                    </span>
+
+                    <span>
+                        @reto.Titulo
+                    </span>
+
                 </li>
-                <li>
-                    <span class="check-icon">✓</span>
-                    <span>Reducir el tiempo de pantalla y apagar dispositivos no esenciales.</span>
-                </li>
-                <li>
-                    <span class="check-icon">✓</span>
-                    <span>Usar una botella reutilizable en lugar de envases desechables.</span>
-                </li>
-                <li>
-                    <span class="check-icon">✓</span>
-                    <span>Registrar una acción ecológica realizada hoy para medir avance.</span>
-                </li>
+            }
+
             </ul>
+
         </div>
     </div>
 
@@ -343,41 +344,3 @@
         </div>
     </div>
 }
-
-<style>
-
-.feed-home-description{
-    background:#f0fdf4;
-    border-left:4px solid #22c55e;
-    padding:1rem;
-    border-radius:14px;
-    margin:.8rem 0 1rem;
-    color:#374151;
-    line-height:1.7;
-}
-
-.comment-box{
-    display:flex;
-    gap:.7rem;
-    margin-top:1rem;
-}
-
-.comment-input{
-    background:#f8fafc !important;
-    border:1px solid #d1d5db !important;
-    border-radius:14px !important;
-    color:#111827 !important;
-    padding:.8rem 1rem !important;
-}
-
-.comment-input::placeholder{
-    color:#6b7280;
-}
-
-.comment-btn{
-    border-radius:14px !important;
-    padding:0 1.2rem !important;
-    font-weight:600 !important;
-}
-
-</style>

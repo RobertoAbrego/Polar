@@ -20,6 +20,8 @@ namespace Polar.Models
 
         public bool EsMia { get; set; }
 
+        public string? FotoPerfil { get; set; }
+
         public List<ComentarioModel> Comentarios { get; set; }
             = new List<ComentarioModel>();
     }

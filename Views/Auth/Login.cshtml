@@ -1,12 +1,19 @@
 @model Polar.Models.LoginModel
 
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-    
-    <div class="card shadow-lg p-4" style="width: 400px; border-radius: 15px;">
-        
+<div class="auth-wrapper">
+
+    <div class="auth-card">
+
         <div class="text-center mb-4">
-            <h2 class="fw-bold">Polar</h2>
-            <p class="text-muted">Inicia sesión en tu cuenta</p>
+
+            <h2 class="auth-title">
+                Polar
+            </h2>
+
+            <p class="auth-subtitle">
+                Inicia sesión en tu cuenta
+            </p>
+
         </div>
 
         @if (ViewBag.Message != null)
@@ -16,67 +23,68 @@
             </div>
         }
 
-        <form method="post" asp-action="Login" id="loginForm" novalidate>
+        <form method="post"
+              asp-action="Login"
+              id="loginForm"
+              novalidate>
 
-            <!-- EMAIL -->
             <div class="mb-3">
-                <label class="form-label">Correo electrónico</label>
-                <input asp-for="Email" id="email" type="email" class="form-control" placeholder="ejemplo@correo.com" required />
-                <small class="text-danger d-none" id="emailError">Ingresa un correo válido</small>
+
+                <label class="form-label">
+                    Correo electrónico
+                </label>
+
+                <input asp-for="Email"
+                       id="email"
+                       type="email"
+                       class="form-control"
+                       placeholder="ejemplo@correo.com"
+                       required />
+
             </div>
 
-            <!-- PASSWORD -->
-            <div class="mb-3">
-                <label class="form-label">Contraseña</label>
-                <input asp-for="Password" id="password" type="password" class="form-control" placeholder="••••••••" required minlength="6" />
-                <small class="text-danger d-none" id="passwordError">Mínimo 6 caracteres</small>
+            <div class="mb-4">
+
+                <label class="form-label">
+                    Contraseña
+                </label>
+
+                <input asp-for="Password"
+                       id="password"
+                       type="password"
+                       class="form-control"
+                       placeholder="••••••••"
+                       required />
+
             </div>
 
-            <button type="submit" class="btn btn-success w-100">
+            <button type="submit"
+                    class="btn btn-polar-primary w-100">
+
                 Iniciar sesión
+
             </button>
+
         </form>
 
-        <div class="text-center mt-3">
-            <span class="text-muted">¿No tienes cuenta?</span><br />
-            <a asp-controller="Auth" asp-action="Register" class="fw-bold">
+        <div class="text-center mt-4">
+
+            <span class="text-polar-muted">
+                ¿No tienes cuenta?
+            </span>
+
+            <br>
+
+            <a asp-controller="Auth"
+               asp-action="Register"
+               class="fw-bold text-info">
+
                 Crear cuenta
+
             </a>
+
         </div>
 
     </div>
+
 </div>
-
-<script>
-document.getElementById("loginForm").addEventListener("submit", function(e) {
-
-    let valid = true;
-
-    let email = document.getElementById("email");
-    let password = document.getElementById("password");
-
-    let emailError = document.getElementById("emailError");
-    let passwordError = document.getElementById("passwordError");
-
-    // Reset errores
-    emailError.classList.add("d-none");
-    passwordError.classList.add("d-none");
-
-    // Validación email
-    if (!email.checkValidity()) {
-        emailError.classList.remove("d-none");
-        valid = false;
-    }
-
-    // Validación password
-    if (password.value.length < 6) {
-        passwordError.classList.remove("d-none");
-        valid = false;
-    }
-
-    // Evita envío si hay errores
-    if (!valid) {
-        e.preventDefault();
-    }
-});
-</script>

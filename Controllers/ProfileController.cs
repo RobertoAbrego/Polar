@@ -98,10 +98,16 @@ namespace Polar.Controllers
                 email,
                 nombre,
                 ruta);
-
+            if (ruta != null)
+            {
+                HttpContext.Session.SetString(
+                    "UserPhoto",
+                    ruta);
+            }
             HttpContext.Session.SetString(
                 "UserName",
                 nombre);
+            
 
             TempData["Success"] =
                 "✅ Perfil actualizado";

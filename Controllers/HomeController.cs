@@ -9,29 +9,47 @@ namespace Polar.Controllers
     {
         private readonly EvidenciaService _ev;
         private readonly AuthService _auth;
+        private readonly MissionService _missions;
 
-        // 🔥 INYECCIÓN DE SERVICES
         public HomeController(
             EvidenciaService ev,
-            AuthService auth)
+            AuthService auth,
+            MissionService missions)
         {
             _ev = ev;
             _auth = auth;
+            _missions = missions;
         }
 
-        // 🔥 INDEX CON FEED
         public IActionResult Index()
         {
             var email =
-                HttpContext.Session.GetString("UserEmail") ?? "";
+                HttpContext.Session.GetString("UserEmail");
 
+            // =========================
+            // FEED
+            // =========================
             ViewBag.Feed =
-                _ev.GetFeed(email);
+                _ev.GetFeed(email ?? "");
 
+            // =========================
+            // MISIONES
+            // =========================
+            ViewBag.Misiones =
+                _missions.GetAll() ?? new List<Mision>();
+
+            // =========================
+            // RETOS (🔥 ESTE ERA EL ERROR)
+            // =========================
+            ViewBag.Retos = new List<object>();
+
+            // =========================
+            // USUARIO LOGUEADO
+            // =========================
             if (!string.IsNullOrWhiteSpace(email))
             {
                 ViewBag.NombreUsuario =
-                    _auth.GetNombreByEmail(email) ?? email;
+                    _auth.GetNombreByEmail(email) ?? "Usuario";
 
                 ViewBag.Puntos =
                     _auth.GetPuntosByEmail(email);
@@ -44,7 +62,7 @@ namespace Polar.Controllers
             }
             else
             {
-                ViewBag.NombreUsuario = "";
+                ViewBag.NombreUsuario = "Usuario";
                 ViewBag.Puntos = 0;
                 ViewBag.Nivel = 1;
                 ViewBag.Progreso = 0;

@@ -1,5 +1,6 @@
 using IBM.Data.Db2;
 using Polar.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace Polar.Services
 {
@@ -19,7 +20,6 @@ namespace Polar.Services
         // =========================
         // 🌱 MISIONES
         // =========================
-
         public List<dynamic> GetMisiones()
         {
             var list = new List<dynamic>();
@@ -54,7 +54,6 @@ namespace Polar.Services
         // =========================
         // 📸 CREAR EVIDENCIA
         // =========================
-
         public void Create(
             string email,
             int misionId,
@@ -65,226 +64,193 @@ namespace Polar.Services
             conn.Open();
 
             var userId = GetUserIdByEmail(conn, email);
-
             var puntosMision = GetMissionPoints(conn, misionId);
-
-            // Insertar evidencia
 
             var insertEv = @"
                 INSERT INTO DB2INST1.EVIDENCIA
-                (
-                    USUARIOID,
-                    MISIONID,
-                    DESCRIPCION
-                )
-                VALUES
-                (
-                    @u,
-                    @m,
-                    @d
-                )";
+                (USUARIOID, MISIONID, DESCRIPCION)
+                VALUES (@u, @m, @d)";
 
             using var cmdEv = new DB2Command(insertEv, conn);
 
-            cmdEv.Parameters.Add(
-                new DB2Parameter("@u", userId));
-
-            cmdEv.Parameters.Add(
-                new DB2Parameter("@m", misionId));
-
-            cmdEv.Parameters.Add(
-                new DB2Parameter("@d", descripcion ?? ""));
+            cmdEv.Parameters.Add(new DB2Parameter("@u", userId));
+            cmdEv.Parameters.Add(new DB2Parameter("@m", misionId));
+            cmdEv.Parameters.Add(new DB2Parameter("@d", descripcion ?? ""));
 
             cmdEv.ExecuteNonQuery();
 
-            // Obtener ID generado
-
-            var getId = @"
-                SELECT IDENTITY_VAL_LOCAL()
-                FROM SYSIBM.SYSDUMMY1";
-
+            var getId = @"SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1";
             using var cmdId = new DB2Command(getId, conn);
 
-            var evidenciaId = Convert.ToInt32(
-                cmdId.ExecuteScalar());
+            var evidenciaId = Convert.ToInt32(cmdId.ExecuteScalar());
 
-            // Guardar imagen
-
+            // =========================
+            // 📸 IMAGEN
+            // =========================
             string? ruta = null;
 
             if (imagen != null && imagen.Length > 0)
             {
-                var fileName =
-                    Guid.NewGuid() +
-                    Path.GetExtension(imagen.FileName);
+                var fileName = Guid.NewGuid() + Path.GetExtension(imagen.FileName);
 
-                var uploads =
-                    Path.Combine(_env.WebRootPath, "uploads");
-
+                var uploads = Path.Combine(_env.WebRootPath, "uploads");
                 Directory.CreateDirectory(uploads);
 
-                var path =
-                    Path.Combine(uploads, fileName);
+                var path = Path.Combine(uploads, fileName);
 
-                using var stream =
-                    new FileStream(path, FileMode.Create);
-
+                using var stream = new FileStream(path, FileMode.Create);
                 imagen.CopyTo(stream);
 
                 ruta = "/uploads/" + fileName;
             }
 
-            // Guardar ruta imagen
-
             if (ruta != null)
             {
                 var insertImg = @"
                     INSERT INTO DB2INST1.EVIDENCIAIMAGEN
-                    (
-                        EVIDENCIAID,
-                        RUTAIMAGEN
-                    )
-                    VALUES
-                    (
-                        @id,
-                        @ruta
-                    )";
+                    (EVIDENCIAID, RUTAIMAGEN)
+                    VALUES (@id, @ruta)";
 
-                using var cmdImg =
-                    new DB2Command(insertImg, conn);
+                using var cmdImg = new DB2Command(insertImg, conn);
 
-                cmdImg.Parameters.Add(
-                    new DB2Parameter("@id", evidenciaId));
-
-                cmdImg.Parameters.Add(
-                    new DB2Parameter("@ruta", ruta));
+                cmdImg.Parameters.Add(new DB2Parameter("@id", evidenciaId));
+                cmdImg.Parameters.Add(new DB2Parameter("@ruta", ruta));
 
                 cmdImg.ExecuteNonQuery();
             }
 
-            // Actualizar puntos y nivel
-
-            ActualizarProgresoUsuario(
-                conn,
-                userId,
-                puntosMision);
+            ActualizarProgresoUsuario(conn, userId, puntosMision);
         }
 
         // =========================
-        // 👤 OBTENER USER ID
+        // 👤 USER
         // =========================
-
-        private int GetUserIdByEmail(
-            DB2Connection conn,
-            string email)
+        private int GetUserIdByEmail(DB2Connection conn, string email)
         {
-            var sql = @"
-                SELECT ID
-                FROM DB2INST1.USUARIO
-                WHERE EMAIL = @email";
+            var sql = @"SELECT ID FROM DB2INST1.USUARIO WHERE EMAIL = @email";
 
             using var cmd = new DB2Command(sql, conn);
-
-            cmd.Parameters.Add(
-                new DB2Parameter("@email", email));
+            cmd.Parameters.Add(new DB2Parameter("@email", email));
 
             var result = cmd.ExecuteScalar();
 
             if (result == null || result == DBNull.Value)
-                throw new InvalidOperationException(
-                    "Usuario no encontrado.");
+                throw new InvalidOperationException("Usuario no encontrado");
 
             return Convert.ToInt32(result);
         }
 
         // =========================
-        // 🎯 PUNTOS MISIÓN
+        // 🎯 PUNTOS
         // =========================
-
-        private int GetMissionPoints(
-            DB2Connection conn,
-            int misionId)
+        private int GetMissionPoints(DB2Connection conn, int misionId)
         {
-            var sql = @"
-                SELECT PUNTOS
-                FROM DB2INST1.MISION
-                WHERE ID = @id";
+            var sql = @"SELECT PUNTOS FROM DB2INST1.MISION WHERE ID = @id";
 
             using var cmd = new DB2Command(sql, conn);
-
-            cmd.Parameters.Add(
-                new DB2Parameter("@id", misionId));
+            cmd.Parameters.Add(new DB2Parameter("@id", misionId));
 
             var result = cmd.ExecuteScalar();
 
-            if (result == null || result == DBNull.Value)
-                return 0;
-
-            return Convert.ToInt32(result);
+            return result == null || result == DBNull.Value
+                ? 0
+                : Convert.ToInt32(result);
         }
 
         // =========================
-        // 📈 ACTUALIZAR PROGRESO
+        // 📈 PROGRESO
         // =========================
-
         private void ActualizarProgresoUsuario(
             DB2Connection conn,
             int userId,
             int puntosMision)
         {
-            var sqlPuntos = @"
-                SELECT COALESCE(PUNTOS_TOTALES, 0)
+            var sql = @"
+                SELECT COALESCE(PUNTOS_TOTALES,0)
                 FROM DB2INST1.USUARIO
-                WHERE ID = @id";
+                WHERE ID=@id";
 
-            using var cmdGet =
-                new DB2Command(sqlPuntos, conn);
+            using var cmd = new DB2Command(sql, conn);
+            cmd.Parameters.Add(new DB2Parameter("@id", userId));
 
-            cmdGet.Parameters.Add(
-                new DB2Parameter("@id", userId));
+            var actual = cmd.ExecuteScalar();
+            var puntosActuales = actual == null ? 0 : Convert.ToInt32(actual);
 
-            var current = cmdGet.ExecuteScalar();
+            var nuevos = puntosActuales + puntosMision;
+            var nivel = (nuevos / 100) + 1;
 
-            var puntosActuales =
-                current == null || current == DBNull.Value
-                ? 0
-                : Convert.ToInt32(current);
-
-            var nuevosPuntos =
-                puntosActuales + puntosMision;
-
-            var nuevoNivel =
-                (nuevosPuntos / 100) + 1;
-
-            var sqlUpdate = @"
+            var update = @"
                 UPDATE DB2INST1.USUARIO
-                SET PUNTOS_TOTALES = @puntos,
-                    NIVEL = @nivel
-                WHERE ID = @id";
+                SET PUNTOS_TOTALES=@p,
+                    NIVEL=@n
+                WHERE ID=@id";
 
-            using var cmdUpdate =
-                new DB2Command(sqlUpdate, conn);
+            using var cmdUp = new DB2Command(update, conn);
 
-            cmdUpdate.Parameters.Add(
-                new DB2Parameter("@puntos", nuevosPuntos));
+            cmdUp.Parameters.Add(new DB2Parameter("@p", nuevos));
+            cmdUp.Parameters.Add(new DB2Parameter("@n", nivel));
+            cmdUp.Parameters.Add(new DB2Parameter("@id", userId));
 
-            cmdUpdate.Parameters.Add(
-                new DB2Parameter("@nivel", nuevoNivel));
-
-            cmdUpdate.Parameters.Add(
-                new DB2Parameter("@id", userId));
-
-            cmdUpdate.ExecuteNonQuery();
+            cmdUp.ExecuteNonQuery();
         }
 
         // =========================
-        // 💬 AGREGAR COMENTARIO
+        // 💬 COMENTARIOS
         // =========================
+        private List<ComentarioModel> GetComentarios(int evidenciaId)
+        {
+            var list = new List<ComentarioModel>();
 
-        public void AddComment(
-            int publicacionId,
-            string email,
-            string contenido)
+            using var conn = _factory.Create();
+            conn.Open();
+
+            var sql = @"
+                SELECT C.ID, C.CONTENIDO, C.FECHA, U.NOMBRE
+                FROM DB2INST1.COMENTARIO C
+                JOIN DB2INST1.USUARIO U ON U.ID=C.USUARIOID
+                WHERE C.PUBLICACIONID=@id
+                ORDER BY C.FECHA ASC";
+
+            using var cmd = new DB2Command(sql, conn);
+            cmd.Parameters.Add(new DB2Parameter("@id", evidenciaId));
+
+            using var reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                list.Add(new ComentarioModel
+                {
+                    Id = reader.GetInt32(0),
+                    Contenido = reader.GetString(1),
+                    Fecha = reader.IsDBNull(2) ? DateTime.Now : reader.GetDateTime(2),
+                    Nombre = reader.GetString(3)
+                });
+            }
+
+            return list;
+        }
+
+        // =========================
+        // 🗑 DELETE
+        // =========================
+        public void DeletePost(int id, string email)
+        {
+            using var conn = _factory.Create();
+            conn.Open();
+
+            var sql = @"
+                DELETE FROM DB2INST1.EVIDENCIA
+                WHERE ID=@id
+                AND USUARIOID=(SELECT ID FROM DB2INST1.USUARIO WHERE EMAIL=@e)";
+
+            using var cmd = new DB2Command(sql, conn);
+            cmd.Parameters.Add(new DB2Parameter("@id", id));
+            cmd.Parameters.Add(new DB2Parameter("@e", email));
+
+            cmd.ExecuteNonQuery();
+        }
+
+        public void AddComment(int publicacionId, string email, string contenido)
         {
             using var conn = _factory.Create();
             conn.Open();
@@ -294,139 +260,36 @@ namespace Polar.Services
                 FROM DB2INST1.USUARIO
                 WHERE EMAIL = @e";
 
-            using var cmdUser =
-                new DB2Command(getUser, conn);
+            using var cmdUser = new DB2Command(getUser, conn);
+            cmdUser.Parameters.Add(new DB2Parameter("@e", email));
 
-            cmdUser.Parameters.Add(
-                new DB2Parameter("@e", email));
-
-            var userId = Convert.ToInt32(
-                cmdUser.ExecuteScalar());
+            var userId = Convert.ToInt32(cmdUser.ExecuteScalar());
 
             var sql = @"
                 INSERT INTO DB2INST1.COMENTARIO
-                (
-                    PUBLICACIONID,
-                    USUARIOID,
-                    CONTENIDO
-                )
-                VALUES
-                (
-                    @p,
-                    @u,
-                    @c
-                )";
+                (PUBLICACIONID, USUARIOID, CONTENIDO)
+                VALUES (@p, @u, @c)";
 
             using var cmd = new DB2Command(sql, conn);
 
-            cmd.Parameters.Add(
-                new DB2Parameter("@p", publicacionId));
-
-            cmd.Parameters.Add(
-                new DB2Parameter("@u", userId));
-
-            cmd.Parameters.Add(
-                new DB2Parameter("@c", contenido));
+            cmd.Parameters.Add(new DB2Parameter("@p", publicacionId));
+            cmd.Parameters.Add(new DB2Parameter("@u", userId));
+            cmd.Parameters.Add(new DB2Parameter("@c", contenido));
 
             cmd.ExecuteNonQuery();
         }
 
         // =========================
-        // 📖 OBTENER COMENTARIOS
+        // 🌍 FEED (FIX IMÁGENES AQUÍ)
         // =========================
-
-        private List<ComentarioModel> GetComentarios(
-            int evidenciaId)
-        {
-            var comentarios =
-                new List<ComentarioModel>();
-
-            using var conn = _factory.Create();
-            conn.Open();
-
-            var sql = @"
-                SELECT
-                    C.ID,
-                    C.CONTENIDO,
-                    C.FECHA,
-                    U.NOMBRE
-                FROM DB2INST1.COMENTARIO C
-                JOIN DB2INST1.USUARIO U
-                    ON U.ID = C.USUARIOID
-                WHERE C.PUBLICACIONID = @id
-                ORDER BY C.FECHA ASC";
-
-            using var cmd =
-                new DB2Command(sql, conn);
-
-            cmd.Parameters.Add(
-                new DB2Parameter("@id", evidenciaId));
-
-            using var reader = cmd.ExecuteReader();
-
-            while (reader.Read())
-            {
-                comentarios.Add(new ComentarioModel
-                {
-                    Id = reader.GetInt32(0),
-
-                    Contenido = reader.GetString(1),
-
-                    Fecha = reader.IsDBNull(2)
-                        ? DateTime.Now
-                        : reader.GetDateTime(2),
-
-                    Nombre = reader.GetString(3)
-                });
-            }
-
-            return comentarios;
-        }
-
-        // =========================
-        // 🗑 ELIMINAR POST
-        // =========================
-
-        public void DeletePost(
-            int evidenciaId,
-            string email)
-        {
-            using var conn = _factory.Create();
-            conn.Open();
-
-            var sql = @"
-                DELETE FROM DB2INST1.EVIDENCIA
-                WHERE ID = @id
-                AND USUARIOID =
-                (
-                    SELECT ID
-                    FROM DB2INST1.USUARIO
-                    WHERE EMAIL = @email
-                )";
-
-            using var cmd = new DB2Command(sql, conn);
-
-            cmd.Parameters.Add(
-                new DB2Parameter("@id", evidenciaId));
-
-            cmd.Parameters.Add(
-                new DB2Parameter("@email", email));
-
-            cmd.ExecuteNonQuery();
-        }
-
-        // =========================
-        // 🌍 FEED
-        // =========================
-
         public List<FeedPost> GetFeed(string email)
         {
-            var list = new List<FeedPost>();
+            var feed = new List<FeedPost>();
 
             using var conn = _factory.Create();
             conn.Open();
 
-            var sql = @"
+            var query = @"
                 SELECT
                     E.ID,
                     U.NOMBRE,
@@ -438,56 +301,43 @@ namespace Polar.Services
                     E.FECHA,
                     U.EMAIL
                 FROM DB2INST1.EVIDENCIA E
-
-                JOIN DB2INST1.USUARIO U
-                    ON U.ID = E.USUARIOID
-
-                JOIN DB2INST1.MISION M
-                    ON M.ID = E.MISIONID
-
-                JOIN DB2INST1.EVIDENCIAIMAGEN EI
-                    ON EI.EVIDENCIAID = E.ID
-
+                JOIN DB2INST1.USUARIO U ON U.ID = E.USUARIOID
+                JOIN DB2INST1.MISION M ON M.ID = E.MISIONID
+                LEFT JOIN DB2INST1.EVIDENCIAIMAGEN EI ON EI.EVIDENCIAID = E.ID
                 ORDER BY E.FECHA DESC";
 
-            using var cmd =
-                new DB2Command(sql, conn);
-
-            using var reader =
-                cmd.ExecuteReader();
+            using var cmd = new DB2Command(query, conn);
+            using var reader = cmd.ExecuteReader();
 
             while (reader.Read())
             {
-                var post = new FeedPost
+                string imagen = "/img/default-post.jpg";
+
+                if (reader["RUTAIMAGEN"] != DBNull.Value)
                 {
-                    EvidenciaId = reader.GetInt32(0),
+                    var r = reader["RUTAIMAGEN"].ToString();
 
-                    Nombre = reader.GetString(1),
+                    if (!string.IsNullOrWhiteSpace(r))
+                        imagen = r.StartsWith("/")
+                            ? r
+                            : "/uploads/" + r;
+                }
 
-                    Titulo = reader.GetString(2),
-
-                    Descripcion = reader.IsDBNull(3)
-                        ? ""
-                        : reader.GetString(3),
-
-                    Tipo = reader.GetString(4),
-
-                    Puntos = reader.GetInt32(5),
-
-                    Imagen = reader.GetString(6),
-
-                    Fecha = reader.GetDateTime(7),
-
-                    EsMia = reader.GetString(8) == email
-                };
-
-                post.Comentarios =
-                    GetComentarios(post.EvidenciaId);
-
-                list.Add(post);
+                feed.Add(new FeedPost
+                {
+                    EvidenciaId = Convert.ToInt32(reader["ID"]),
+                    Nombre = reader["NOMBRE"]?.ToString() ?? "",
+                    Titulo = reader["TITULO"]?.ToString() ?? "",
+                    Descripcion = reader["DESCRIPCION"]?.ToString() ?? "",
+                    Tipo = reader["TIPO"]?.ToString() ?? "",
+                    Puntos = reader["PUNTOS"] == DBNull.Value ? 0 : Convert.ToInt32(reader["PUNTOS"]),
+                    Imagen = imagen,
+                    Fecha = reader["FECHA"] == DBNull.Value ? DateTime.Now : Convert.ToDateTime(reader["FECHA"]),
+                    EsMia = reader["EMAIL"]?.ToString() == email
+                });
             }
 
-            return list;
+            return feed;
         }
     }
 }
