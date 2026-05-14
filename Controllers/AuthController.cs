@@ -23,8 +23,8 @@ namespace Polar.Controllers
 
         private void SendEmail(string toEmail, string code)
         {
-            var fromEmail = "max502991@gmail.com";
-            var password = "mvegarmwrfyfguuc";
+            var fromEmail = "polar.app.sv@gmail.com";
+            var password = "jrddhtfapcsodstn";
 
             var client = new SmtpClient("smtp.gmail.com", 587)
             {
