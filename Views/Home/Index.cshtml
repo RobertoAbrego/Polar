@@ -140,22 +140,30 @@
 
             <ul class="list-clean mt-4">
 
-            @foreach(var reto in (ViewBag.Retos ?? new List<object>()))
-            {
-                <li>
+        @foreach(var reto in (ViewBag.Retos ?? new List<object>()))
+        {
+            <li class="mb-3">
 
-                    <span class="check-icon">
-                        ✓
-                    </span>
+                <span class="check-icon">
+                    ✓
+                </span>
 
-                    <span>
+                <div>
+
+                    <strong>
                         @reto.Titulo
-                    </span>
+                    </strong>
 
-                </li>
-            }
+                    <p class="text-muted mb-0">
+                        @reto.Descripcion
+                    </p>
 
-            </ul>
+                </div>
+
+            </li>
+        }
+
+        </ul>
 
         </div>
     </div>

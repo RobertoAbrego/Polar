@@ -35,13 +35,16 @@ namespace Polar.Controllers
             // =========================
             // MISIONES
             // =========================
-            ViewBag.Misiones =
+            var misiones =
                 _missions.GetAll() ?? new List<Mision>();
 
+            ViewBag.Misiones = misiones;
+
             // =========================
-            // RETOS (🔥 ESTE ERA EL ERROR)
+            // RETOS (primeras 3 misiones)
             // =========================
-            ViewBag.Retos = new List<object>();
+            ViewBag.Retos =
+                misiones.Take(3).ToList();
 
             // =========================
             // USUARIO LOGUEADO
