@@ -291,15 +291,16 @@ namespace Polar.Services
 
             var query = @"
                 SELECT
-                    E.ID,
-                    U.NOMBRE,
-                    M.TITULO,
-                    E.DESCRIPCION,
-                    M.TIPO,
-                    M.PUNTOS,
-                    EI.RUTAIMAGEN,
-                    E.FECHA,
-                    U.EMAIL
+                E.ID,
+                U.NOMBRE,
+                U.FOTO_PERFIL,
+                M.TITULO,
+                E.DESCRIPCION,
+                M.TIPO,
+                M.PUNTOS,
+                EI.RUTAIMAGEN,
+                E.FECHA,
+                U.EMAIL
                 FROM DB2INST1.EVIDENCIA E
                 JOIN DB2INST1.USUARIO U ON U.ID = E.USUARIOID
                 JOIN DB2INST1.MISION M ON M.ID = E.MISIONID
@@ -327,13 +328,30 @@ namespace Polar.Services
                 {
                     EvidenciaId = Convert.ToInt32(reader["ID"]),
                     Nombre = reader["NOMBRE"]?.ToString() ?? "",
+
+                    FotoPerfil = reader["FOTO_PERFIL"] == DBNull.Value
+                        ? null
+                        : reader["FOTO_PERFIL"].ToString(),
+
                     Titulo = reader["TITULO"]?.ToString() ?? "",
                     Descripcion = reader["DESCRIPCION"]?.ToString() ?? "",
                     Tipo = reader["TIPO"]?.ToString() ?? "",
-                    Puntos = reader["PUNTOS"] == DBNull.Value ? 0 : Convert.ToInt32(reader["PUNTOS"]),
+
+                    Puntos = reader["PUNTOS"] == DBNull.Value
+                        ? 0
+                        : Convert.ToInt32(reader["PUNTOS"]),
+
                     Imagen = imagen,
-                    Fecha = reader["FECHA"] == DBNull.Value ? DateTime.Now : Convert.ToDateTime(reader["FECHA"]),
-                    EsMia = reader["EMAIL"]?.ToString() == email
+
+                    Fecha = reader["FECHA"] == DBNull.Value
+                        ? DateTime.Now
+                        : Convert.ToDateTime(reader["FECHA"]),
+
+                    EsMia = reader["EMAIL"]?.ToString() == email,
+
+                    Comentarios = GetComentarios(
+                        Convert.ToInt32(reader["ID"])
+                    )
                 });
             }
 

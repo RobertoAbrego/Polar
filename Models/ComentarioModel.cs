@@ -11,5 +11,7 @@ namespace Polar.Models
         public DateTime Fecha { get; set; }
 
         public bool EsMio { get; set; }
+
+        public string? FotoPerfil { get; set; }
     }
 }
