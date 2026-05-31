@@ -42,15 +42,21 @@ namespace Polar.Controllers
             {
                 HttpContext.Session.SetString("UserEmail", model.Email);
 
-                // 🔥 obtener nombre desde DB
-                var nombre = _authService.GetNombreByEmail(model.Email);
+                var usuario = _authService.GetUserByEmail(model.Email);
 
-                if (nombre != null)
+                if (usuario != null)
                 {
-                    HttpContext.Session.SetString("UserName", nombre);
+                    HttpContext.Session.SetString(
+                        "UserName",
+                        usuario.Nombre ?? "Usuario");
+
+                    HttpContext.Session.SetString(
+                        "UserPhoto",
+                        usuario.FotoPerfil ?? "");
                 }
 
                 TempData["Success"] = "✅ Inicio de sesión exitoso";
+
                 return RedirectToAction("Index", "Home");
             }
 
