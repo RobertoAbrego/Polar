@@ -197,8 +197,10 @@ namespace Polar.Services
         // =========================
         // 💬 COMENTARIOS
         // =========================
-        private List<ComentarioModel> GetComentarios(int evidenciaId)
-        {
+       private List<ComentarioModel> GetComentarios(
+        int evidenciaId,
+        string emailActual,
+        bool esMiPublicacion){
             var list = new List<ComentarioModel>();
 
             using var conn = _factory.Create();
@@ -243,7 +245,9 @@ namespace Polar.Services
 
                 Email = reader.GetString(5),
 
-                PuedoEliminar = true
+                PuedoEliminar =
+                reader.GetString(5) == emailActual
+                || esMiPublicacion
             });
             }
 
@@ -298,6 +302,50 @@ namespace Polar.Services
 
             cmd.ExecuteNonQuery();
         }
+
+        public bool CanDeleteComment(
+            int comentarioId,
+            string email)
+        {
+            using var conn = _factory.Create();
+
+            conn.Open();
+
+            var currentUserId =
+                GetUserIdByEmail(conn, email);
+
+            var sql = @"
+                SELECT
+                    C.USUARIOID,
+                    E.USUARIOID
+                FROM DB2INST1.COMENTARIO C
+                JOIN DB2INST1.EVIDENCIA E
+                    ON E.ID = C.PUBLICACIONID
+                WHERE C.ID = @id";
+
+            using var cmd =
+                new DB2Command(sql, conn);
+
+            cmd.Parameters.Add(
+                new DB2Parameter("@id", comentarioId));
+
+            using var reader =
+                cmd.ExecuteReader();
+
+            if (!reader.Read())
+                return false;
+
+            var comentarioOwner =
+                Convert.ToInt32(reader.GetValue(0));
+
+            var postOwner =
+                Convert.ToInt32(reader.GetValue(1));
+
+            return currentUserId == comentarioOwner
+                || currentUserId == postOwner;
+        }
+
+
         public void DeleteComment(int comentarioId)
         {
             using var conn = _factory.Create();
@@ -387,7 +435,9 @@ namespace Polar.Services
                     EsMia = reader["EMAIL"]?.ToString() == email,
 
                     Comentarios = GetComentarios(
-                        Convert.ToInt32(reader["ID"])
+                        Convert.ToInt32(reader["ID"]),
+                        email,
+                        reader["EMAIL"]?.ToString() == email
                     )
                 });
             }

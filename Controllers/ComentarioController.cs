@@ -45,7 +45,20 @@ namespace Polar.Controllers
                     "Auth");
             }
 
+            if (!_service.CanDeleteComment(id, email))
+            {
+                TempData["Error"] =
+                    "No tienes permisos";
+
+                return RedirectToAction(
+                    "Index",
+                    "Feed");
+            }
+
             _service.DeleteComment(id);
+
+            TempData["Success"] =
+                "Comentario eliminado";
 
             return RedirectToAction(
                 "Index",
