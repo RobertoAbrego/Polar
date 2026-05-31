@@ -30,5 +30,27 @@ namespace Polar.Controllers
 
             return RedirectToAction("Index", "Feed");
         }
+
+        [HttpPost]
+        public IActionResult Eliminar(int id)
+        {
+            var email =
+                HttpContext.Session.GetString(
+                    "UserEmail");
+
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return RedirectToAction(
+                    "Login",
+                    "Auth");
+            }
+
+            _service.DeleteComment(id);
+
+            return RedirectToAction(
+                "Index",
+                "Feed");
+        }
+
     }
 }

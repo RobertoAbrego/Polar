@@ -139,28 +139,71 @@
 
                     @if (item.Comentarios != null && item.Comentarios.Count > 0)
                     {
-                        @foreach (var c in item.Comentarios)
-                        {
-                            <div class="comment-box">
+                       @foreach (var c in item.Comentarios)
+                    {
+                        <div class="comment-box">
 
-                                <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="d-flex justify-content-between align-items-start">
 
-                                    <strong>
-                                        @c.Nombre
-                                    </strong>
+                                <div class="d-flex gap-2 align-items-center">
 
-                                    <small class="text-muted">
-                                        @c.Fecha
-                                    </small>
+                                    @if(!string.IsNullOrWhiteSpace(c.FotoPerfil))
+                                    {
+                                        <img src="@c.FotoPerfil"
+                                            class="user-avatar" />
+                                    }
+                                    else
+                                    {
+                                        <div class="user-fallback">
+
+                                            @(string.IsNullOrEmpty(c.Nombre)
+                                                ? "U"
+                                                : c.Nombre.Substring(0,1).ToUpper())
+
+                                        </div>
+                                    }
+
+                                    <div>
+
+                                        <strong>
+                                            @c.Nombre
+                                        </strong>
+
+                                        <div>
+                                            <small class="text-muted">
+                                                @c.Fecha
+                                            </small>
+                                        </div>
+
+                                    </div>
 
                                 </div>
 
-                                <p class="mb-0">
-                                    @c.Contenido
-                                </p>
+                                @if(c.PuedoEliminar)
+                                {
+                                    <form asp-controller="Comentario"
+                                        asp-action="Eliminar"
+                                        method="post">
+
+                                        <input type="hidden"
+                                            name="id"
+                                            value="@c.Id" />
+
+                                        <button class="btn btn-outline-danger btn-sm">
+                                            🗑
+                                        </button>
+
+                                    </form>
+                                }
 
                             </div>
-                        }
+
+                            <p class="mt-2 mb-0">
+                                @c.Contenido
+                            </p>
+
+                        </div>
+                    }
                     }
                     else
                     {

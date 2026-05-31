@@ -205,10 +205,17 @@ namespace Polar.Services
             conn.Open();
 
             var sql = @"
-                SELECT C.ID, C.CONTENIDO, C.FECHA, U.NOMBRE
+                SELECT
+                    C.ID,
+                    C.CONTENIDO,
+                    C.FECHA,
+                    U.NOMBRE,
+                    U.FOTO_PERFIL,
+                    U.EMAIL
                 FROM DB2INST1.COMENTARIO C
-                JOIN DB2INST1.USUARIO U ON U.ID=C.USUARIOID
-                WHERE C.PUBLICACIONID=@id
+                JOIN DB2INST1.USUARIO U
+                    ON U.ID = C.USUARIOID
+                WHERE C.PUBLICACIONID = @id
                 ORDER BY C.FECHA ASC";
 
             using var cmd = new DB2Command(sql, conn);
@@ -218,13 +225,26 @@ namespace Polar.Services
 
             while (reader.Read())
             {
-                list.Add(new ComentarioModel
-                {
-                    Id = reader.GetInt32(0),
-                    Contenido = reader.GetString(1),
-                    Fecha = reader.IsDBNull(2) ? DateTime.Now : reader.GetDateTime(2),
-                    Nombre = reader.GetString(3)
-                });
+            list.Add(new ComentarioModel
+            {
+                Id = reader.GetInt32(0),
+
+                Contenido = reader.GetString(1),
+
+                Fecha = reader.IsDBNull(2)
+                    ? DateTime.Now
+                    : reader.GetDateTime(2),
+
+                Nombre = reader.GetString(3),
+
+                FotoPerfil = reader.IsDBNull(4)
+                    ? null
+                    : reader.GetString(4),
+
+                Email = reader.GetString(5),
+
+                PuedoEliminar = true
+            });
             }
 
             return list;
@@ -275,6 +295,23 @@ namespace Polar.Services
             cmd.Parameters.Add(new DB2Parameter("@p", publicacionId));
             cmd.Parameters.Add(new DB2Parameter("@u", userId));
             cmd.Parameters.Add(new DB2Parameter("@c", contenido));
+
+            cmd.ExecuteNonQuery();
+        }
+        public void DeleteComment(int comentarioId)
+        {
+            using var conn = _factory.Create();
+
+            conn.Open();
+
+            var sql = @"
+                DELETE FROM DB2INST1.COMENTARIO
+                WHERE ID = @id";
+
+            using var cmd = new DB2Command(sql, conn);
+
+            cmd.Parameters.Add(
+                new DB2Parameter("@id", comentarioId));
 
             cmd.ExecuteNonQuery();
         }
