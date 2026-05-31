@@ -1,0 +1,102 @@
+@model Polar.Models.UsuarioModel
+
+<div class="container">
+
+    <h2 class="mb-4">
+        Configuración de perfil
+    </h2>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Error"]
+        </div>
+    }
+
+    @if (Model.FotoPerfil != null)
+    {
+        <img src="@Model.FotoPerfil"
+             width="120"
+             height="120"
+             class="rounded-circle mb-3"
+             style="object-fit:cover;" />
+    }
+
+    <!-- PERFIL -->
+    <div class="card shadow p-4 mb-4">
+
+        <h4 class="mb-3">
+            Perfil
+        </h4>
+
+        <form method="post"
+              enctype="multipart/form-data"
+              asp-action="UpdateProfile">
+
+            <div class="mb-3">
+                <label>Nombre</label>
+
+                <input name="nombre"
+                       class="form-control"
+                       value="@Model.Nombre" />
+            </div>
+
+            <div class="mb-3">
+                <label>Foto de perfil</label>
+
+                <input type="file"
+                       name="foto"
+                       class="form-control" />
+            </div>
+
+            <button class="btn btn-success">
+                Guardar cambios
+            </button>
+
+        </form>
+
+    </div>
+
+    <!-- PASSWORD -->
+    <div class="card shadow p-4">
+
+        <h4 class="mb-3">
+            Cambiar contraseña
+        </h4>
+
+        <form method="post"
+              asp-action="SendPasswordCode">
+
+            <button class="btn btn-primary mb-4">
+                Enviar código
+            </button>
+
+        </form>
+
+        <form method="post"
+              asp-action="ChangePassword">
+
+            <div class="mb-3">
+                <label>Código</label>
+
+                <input name="code"
+                       class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label>Nueva contraseña</label>
+
+                <input type="password"
+                       name="newPassword"
+                       class="form-control" />
+            </div>
+
+            <button class="btn btn-dark">
+                Cambiar contraseña
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
