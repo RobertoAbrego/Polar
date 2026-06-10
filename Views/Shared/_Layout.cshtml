@@ -26,6 +26,7 @@
           href="~/css/site.css"
           asp-append-version="true" />
 
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 
 <body class="d-flex flex-column min-vh-100">
@@ -97,6 +98,17 @@
                        asp-action="Crear">
 
                         Subir evidencia
+                    </a>
+                
+
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link nav-polar-link"
+                    asp-controller="Ranking"
+                    asp-action="Index">
+
+                        El más Polar
 
                     </a>
                 </li>

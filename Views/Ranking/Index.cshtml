@@ -1,0 +1,356 @@
+@* ============================================================
+   RUTA: Views/Ranking/Index.cshtml        (ARCHIVO NUEVO)
+   ============================================================ *@
+@model List<Polar.Models.RankingUsuario>
+@{
+    ViewData["Title"] = "El más Polar";
+    var yo    = ViewBag.MiPosicion as Polar.Models.RankingUsuario;
+    var top3  = Model.Take(3).ToList();
+    var resto = Model.Skip(3).ToList();
+}
+
+@section Styles {
+<style>
+/* ── Página ─────────────────────────────────────────────── */
+.rank-page { max-width: 720px; margin: 0 auto; padding: 0 1rem 4rem; }
+
+/* ── Header ─────────────────────────────────────────────── */
+.rank-header {
+    background: linear-gradient(135deg, #0a2e1a 0%, #1a6b40 100%);
+    border-radius: 1.25rem;
+    color: #fff;
+    padding: 2rem 1rem 1.75rem;
+    text-align: center;
+    margin-bottom: 1.75rem;
+}
+.rank-header h1 { font-size: 2rem; font-weight: 800; margin: 0; letter-spacing: -.5px; }
+.rank-header p  { opacity: .75; margin: .35rem 0 0; font-size: .95rem; }
+
+/* ── Tarjeta "mi posición" ───────────────────────────────── */
+.rank-yo {
+    border: 2px solid #1a6b40;
+    border-radius: .85rem;
+    background: linear-gradient(90deg, rgba(26,107,64,.08), rgba(26,107,64,.15));
+    padding: .9rem 1.1rem;
+    margin-bottom: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: .85rem;
+}
+.rank-yo .badge-pos { font-size: 1.5rem; min-width: 2.2rem; text-align: center; }
+.rank-yo .rank-nombre { font-weight: 700; font-size: .9rem; }
+.rank-yo .rank-sub    { font-size: .78rem; color: #666; }
+
+/* ── Podio ───────────────────────────────────────────────── */
+.podio-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: .65rem;
+    margin-bottom: 2.5rem;
+}
+.podio-col { display: flex; flex-direction: column; align-items: center; }
+
+.podio-card {
+    background: #fff;
+    border-radius: .85rem;
+    padding: .85rem .6rem .7rem;
+    box-shadow: 0 6px 18px rgba(0,0,0,.13);
+    width: 148px;
+    text-align: center;
+}
+.podio-card.p1 { width: 168px; }
+
+.podio-crown { font-size: 1.7rem; margin-bottom: .15rem; line-height: 1; }
+
+.podio-avatar {
+    width: 62px; height: 62px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #1a6b40;
+    display: block;
+    margin: 0 auto .4rem;
+}
+.podio-card.p1 .podio-avatar { width: 78px; height: 78px; }
+
+.podio-nombre {
+    font-weight: 700;
+    font-size: .83rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: .15rem;
+}
+.podio-pts { font-size: .8rem;  color: #444; }
+.podio-lvl { font-size: .72rem; margin-top: .1rem; }
+
+.podio-base {
+    width: 100%;
+    text-align: center;
+    font-size: 1.35rem;
+    border-radius: 0 0 .6rem .6rem;
+    margin-top: .2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.podio-base.b1 { background: #FFD700; height: 76px; }
+.podio-base.b2 { background: #C0C0C0; height: 58px; }
+.podio-base.b3 { background: #CD7F32; height: 44px; }
+
+/* ── Tabla posiciones 4-20 ───────────────────────────────── */
+.rank-table .card-header {
+    background: rgba(26,107,64,.08);
+    font-weight: 600;
+}
+.rank-fila { transition: background .15s; }
+.rank-fila:hover { background: #f0faf3 !important; }
+.rank-fila-yo    { background: #e6f4ea !important; }
+
+.rank-num {
+    min-width: 2.4rem;
+    font-weight: 700;
+    color: #888;
+    font-size: .9rem;
+}
+.rank-avatar-sm {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+.avatar-fallback-sm {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #1a6b40;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.avatar-fallback-lg {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    background: #1a6b40;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+    border: 3px solid #1a6b40;
+    margin: 0 auto .4rem;
+}
+
+.podio-card.p1 .avatar-fallback-lg {
+    width: 78px;
+    height: 78px;
+    font-size: 1.8rem;
+}
+.rank-pts  { color: #1a6b40; font-weight: 700; }
+
+/* ── Estado vacío ────────────────────────────────────────── */
+.rank-empty { text-align: center; padding: 3rem 1rem; color: #888; }
+.rank-empty .icon { font-size: 3rem; margin-bottom: .75rem; }
+
+/* ── Dark mode ───────────────────────────────────────────── */
+@@media (prefers-color-scheme: dark) {
+    .podio-card               { background: #1b2e22 !important; color: #e0e0e0; }
+    .rank-table .list-group-item { background: #151f19 !important; color: #ddd; border-color: #2a3d30; }
+    .rank-fila:hover          { background: #1e3328 !important; }
+    .rank-fila-yo             { background: #163020 !important; }
+    .rank-yo                  { background: rgba(26,107,64,.2); border-color: #2e9c5a; }
+    .rank-yo .rank-sub        { color: #aaa; }
+    .rank-num                 { color: #888; }
+}
+</style>
+}
+
+<div class="rank-page">
+
+    @* HEADER *@
+    <div class="rank-header">
+        <h1>🏔️ El más Polar</h1>
+        <p>Los usuarios más comprometidos con el planeta</p>
+    </div>
+
+    @* TARJETA "MI POSICIÓN" (solo si hay sesión activa) *@
+    @if (yo != null)
+    {
+        <div class="rank-yo">
+            <span class="badge-pos">@yo.EtiquetaPodio</span>
+        @if (!string.IsNullOrWhiteSpace(yo.FotoPerfil))
+        {
+            <img src="@yo.FotoPerfil"
+                alt="@yo.NombreUsuario"
+                class="rank-avatar-sm" />
+        }
+        else
+        {
+            <div class="avatar-fallback-sm">
+                @yo.Inicial
+            </div>
+        }
+            <div class="flex-grow-1">
+                <div class="rank-nombre">Tu posición actual</div>
+                <div class="rank-sub">@yo.NombreUsuario</div>
+            </div>
+            <div class="text-end">
+                <div class="rank-pts fw-bold">@yo.PuntosTotales ⭐</div>
+                <div class="rank-sub" style="color:@yo.InsigniaColor">
+                    @yo.IconoNivel @yo.NombreNivel
+                </div>
+                <div class="rank-sub text-muted">@yo.MisionesCompletadas misiones</div>
+            </div>
+        </div>
+    }
+
+    @* PODIO TOP 3 *@
+    @if (top3.Any())
+    {
+        <div class="podio-wrap">
+
+            @* ── 2° lugar (izquierda) ── *@
+            @if (top3.Count >= 2)
+            {
+                <div class="podio-col">
+                    <div class="podio-card p2">
+                        @if (!string.IsNullOrWhiteSpace(top3[1].FotoPerfil))
+                        {
+                            <img src="@top3[1].FotoPerfil"
+                                alt="@top3[1].NombreUsuario"
+                                class="podio-avatar" />
+                        }
+                        else
+                        {
+                            <div class="avatar-fallback-lg">
+                                @top3[1].Inicial
+                            </div>
+                        }
+                        <div class="podio-nombre">@top3[1].NombreUsuario</div>
+                        <div class="podio-pts">@top3[1].PuntosTotales ⭐</div>
+                        <div class="podio-lvl" style="color:@top3[1].InsigniaColor">
+                            @top3[1].IconoNivel @top3[1].NombreNivel
+                        </div>
+                    </div>
+                    <div class="podio-base b2">🥈</div>
+                </div>
+            }
+
+            @* ── 1° lugar (centro) ── *@
+            <div class="podio-col">
+                <div class="podio-crown">👑</div>
+                <div class="podio-card p1">
+                    @if (!string.IsNullOrWhiteSpace(top3[0].FotoPerfil))
+                    {
+                        <img src="@top3[0].FotoPerfil"
+                            alt="@top3[0].NombreUsuario"
+                            class="podio-avatar" />
+                    }
+                    else
+                    {
+                        <div class="avatar-fallback-lg">
+                            @top3[0].Inicial
+                        </div>
+                    }
+                    <div class="podio-nombre">@top3[0].NombreUsuario</div>
+                    <div class="podio-pts">@top3[0].PuntosTotales ⭐</div>
+                    <div class="podio-lvl" style="color:@top3[0].InsigniaColor">
+                        @top3[0].IconoNivel @top3[0].NombreNivel
+                    </div>
+                </div>
+                <div class="podio-base b1">🥇</div>
+            </div>
+
+            @* ── 3° lugar (derecha) ── *@
+            @if (top3.Count >= 3)
+            {
+                <div class="podio-col">
+                    <div class="podio-card p3">
+                        @if (!string.IsNullOrWhiteSpace(top3[2].FotoPerfil))
+                        {
+                            <img src="@top3[2].FotoPerfil"
+                                alt="@top3[2].NombreUsuario"
+                                class="podio-avatar" />
+                        }
+                        else
+                        {
+                            <div class="avatar-fallback-lg">
+                                @top3[2].Inicial
+                            </div>
+                        }
+                        <div class="podio-nombre">@top3[2].NombreUsuario</div>
+                        <div class="podio-pts">@top3[2].PuntosTotales ⭐</div>
+                        <div class="podio-lvl" style="color:@top3[2].InsigniaColor">
+                            @top3[2].IconoNivel @top3[2].NombreNivel
+                        </div>
+                    </div>
+                    <div class="podio-base b3">🥉</div>
+                </div>
+            }
+
+        </div>
+    }
+
+    @* TABLA POSICIONES 4–20 *@
+    @if (resto.Any())
+    {
+        <div class="rank-table card shadow-sm mb-4">
+            <div class="card-header">
+                🌍 Clasificación Global
+            </div>
+            <ul class="list-group list-group-flush">
+                @foreach (var u in resto)
+                {
+                    bool esYo = yo != null && u.UsuarioId == yo.UsuarioId;
+                    <li class="list-group-item rank-fila @(esYo ? "rank-fila-yo" : "")">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="rank-num">@u.EtiquetaPodio</span>
+                            @if (!string.IsNullOrWhiteSpace(u.FotoPerfil))
+                            {
+                                <img src="@u.FotoPerfil"
+                                    alt="@u.NombreUsuario"
+                                    class="rank-avatar-sm" />
+                            }
+                            else
+                            {
+                                <div class="avatar-fallback-sm">
+                                    @u.Inicial
+                                </div>
+                            }
+                            <div class="flex-grow-1">
+                                <div class="fw-semibold small">@u.NombreUsuario</div>
+                                <div class="small" style="color:@u.InsigniaColor">
+                                    @u.IconoNivel @u.NombreNivel
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <div class="rank-pts">@u.PuntosTotales ⭐</div>
+                                <div class="text-muted small">
+                                    @u.MisionesCompletadas misiones
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+
+    @* ESTADO VACÍO *@
+    @if (!Model.Any())
+    {
+        <div class="rank-empty">
+            <div class="icon">🌱</div>
+            <p>Aún no hay participantes en el ranking.<br />
+               ¡Sé el primero completando una misión!</p>
+        </div>
+    }
+
+</div>
