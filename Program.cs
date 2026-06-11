@@ -23,7 +23,7 @@ builder.Services.AddScoped<RankingService>();
 
 
 // Softlink-code: servicios relacionados con la IA
-builder.Services.AddHttpClient();
+builder.Services.AddHttpClient<GeminiService>();  // Registrar el cliente HTTP y el servicio de Gemini
 builder.Services.AddScoped<MisionGenerationService>();
 builder.Services.AddHostedService<MisionDiariaHostedService>();
 

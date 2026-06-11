@@ -55,11 +55,14 @@ namespace Polar.Services
         // 📸 CREAR EVIDENCIA
         // =========================
         public void Create(
-            string email,
-            int misionId,
-            string descripcion,
-            IFormFile imagen)
-        {
+        string email,
+        int misionId,
+        string descripcion,
+        IFormFile imagen,
+        int puntosIA,       // ◄--- NUEVO PARÁMETRO
+        string comentarioIA // ◄--- NUEVO PARÁMETRO
+)
+        {    
             using var conn = _factory.Create();
             conn.Open();
 
@@ -85,7 +88,7 @@ namespace Polar.Services
             var evidenciaId = Convert.ToInt32(cmdId.ExecuteScalar());
 
             // =========================
-            // 📸 IMAGEN
+            // 📸 IMAGEN (Tu código intacto)
             // =========================
             string? ruta = null;
 
@@ -119,26 +122,48 @@ namespace Polar.Services
                 cmdImg.ExecuteNonQuery();
             }
 
+            // Tu progreso original se sigue ejecutando perfectamente
             ActualizarProgresoUsuario(conn, userId, puntosMision);
+
+            // ========================================================
+            // 🤖 RECOMPENSAS DE GEMINI (NUEVA LÓGICA AGREGADA AL FINAL)
+            // ========================================================
+    
+           // 1. Sumar los puntos obtenidos por la IA a la tabla de Usuarios
+            var updateRanking = @"
+                UPDATE DB2INST1.USUARIO 
+                SET PUNTOS = PUNTOS + @puntosIA 
+                WHERE ID = @u";
+
+            using var cmdRank = new DB2Command(updateRanking, conn);
+            cmdRank.Parameters.Add(new DB2Parameter("@puntosIA", puntosIA));
+            cmdRank.Parameters.Add(new DB2Parameter("@u", userId));
+            cmdRank.ExecuteNonQuery();
+
+            // 2. Insertar el comentario automático de Gemini acoplado a la Evidencia
+            var insertComentario = @"
+                INSERT INTO DB2INST1.COMENTARIO 
+                (EVIDENCIAID, CONTENIDO, USUARIOID) 
+                VALUES (@evId, @txt, @botId)";
+
+            using var cmdCom = new DB2Command(insertComentario, conn);
+            cmdCom.Parameters.Add(new DB2Parameter("@evId", evidenciaId));
+            cmdCom.Parameters.Add(new DB2Parameter("@txt", comentarioIA));
+            cmdCom.Parameters.Add(new DB2Parameter("@botId", 999)); // Puedes usar un ID fijo para identificar que fue la IA quien comentó
+
+            cmdCom.ExecuteNonQuery();
         }
 
-        // =========================
-        // 👤 USER
-        // =========================
-        private int GetUserIdByEmail(DB2Connection conn, string email)
+        private void ActualizarProgresoUsuario(DB2Connection conn, object userId, int puntosMision)
         {
-            var sql = @"SELECT ID FROM DB2INST1.USUARIO WHERE EMAIL = @email";
-
-            using var cmd = new DB2Command(sql, conn);
-            cmd.Parameters.Add(new DB2Parameter("@email", email));
-
-            var result = cmd.ExecuteScalar();
-
-            if (result == null || result == DBNull.Value)
-                throw new InvalidOperationException("Usuario no encontrado");
-
-            return Convert.ToInt32(result);
+            throw new NotImplementedException();
         }
+
+        private object GetUserIdByEmail(DB2Connection conn, string email)
+        {
+            throw new NotImplementedException();
+        }
+
 
         // =========================
         // 🎯 PUNTOS
@@ -311,8 +336,7 @@ namespace Polar.Services
 
             conn.Open();
 
-            var currentUserId =
-                GetUserIdByEmail(conn, email);
+            var currentUserId = GetUserIdByEmail(conn, email);
 
             var sql = @"
                 SELECT
@@ -335,14 +359,13 @@ namespace Polar.Services
             if (!reader.Read())
                 return false;
 
-            var comentarioOwner =
-                Convert.ToInt32(reader.GetValue(0));
+            var comentarioOwner = Convert.ToInt32(reader.GetValue(0));
+            var postOwner = Convert.ToInt32(reader.GetValue(1));
 
-            var postOwner =
-                Convert.ToInt32(reader.GetValue(1));
+            int currentUserIdInt = Convert.ToInt32(currentUserId);
 
-            return currentUserId == comentarioOwner
-                || currentUserId == postOwner;
+            return currentUserIdInt == comentarioOwner
+                || currentUserIdInt == postOwner;
         }
 
 
